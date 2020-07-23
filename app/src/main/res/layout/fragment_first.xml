@@ -144,7 +144,7 @@
             android:layout_marginTop="2dp"
             android:fontFamily="sans-serif-black"
             android:paddingLeft="3dp"
-            android:text="Best Safety and Contactless Delivery!"
+            android:text="Best Safety standards for Covid-19!"
             android:textColor="#CC2626"
             android:textSize="12sp"
             app:layout_constraintLeft_toRightOf="@+id/imageView"
