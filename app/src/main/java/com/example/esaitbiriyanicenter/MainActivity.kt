@@ -1,4 +1,4 @@
-package com.example.esaitbiriyanicenter;
+package com.restaurant.esaitbiriyanicenter;
 
 import android.content.Intent
 import android.net.Uri

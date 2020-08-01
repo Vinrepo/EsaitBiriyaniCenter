@@ -1,4 +1,4 @@
-package com.example.esaitbiriyanicenter
+package com.restaurant.esaitbiriyanicenter
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,12 +11,13 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
+
+
         handler = Handler()
         handler!!.postDelayed(Runnable {
             val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
             finish()
-        }, 3000)
+        }, 2000)
     }
-
 }

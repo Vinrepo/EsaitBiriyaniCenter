@@ -1,3 +1,3 @@
-package com.example.esaitbiriyanicenter
+package com.restaurant.esaitbiriyanicenter
 
 data class Child(var name:String)

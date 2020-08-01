@@ -1,4 +1,4 @@
-package com.example.esaitbiriyanicenter
+package com.restaurant.esaitbiriyanicenter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
+import com.restaurant.esaitbiriyanicenter.R
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 
 class AdapterSectionRecycler(context: Context, sectionItemList: MutableList<SectionHeader>,navController : NavController) : SectionRecyclerViewAdapter<SectionHeader, Child, SectionViewHolder, ChildViewHolder>(

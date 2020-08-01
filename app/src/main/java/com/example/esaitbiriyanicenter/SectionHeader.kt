@@ -1,5 +1,4 @@
-package com.example.esaitbiriyanicenter
-
+package com.restaurant.esaitbiriyanicenter
 import com.intrusoft.sectionedrecyclerview.Section
 
 public class SectionHeader(childList: List<Child>?,sectionText: String?) : Section<Child> {

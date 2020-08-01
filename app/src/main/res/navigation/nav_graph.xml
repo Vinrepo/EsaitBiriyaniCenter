@@ -7,17 +7,21 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.example.esaitbiriyanicenter.FirstFragment"
+        android:name="com.restaurant.esaitbiriyanicenter.FirstFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/SecondFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
 
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="com.example.esaitbiriyanicenter.SecondFragment"
+        android:name="com.restaurant.esaitbiriyanicenter.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
        <action
