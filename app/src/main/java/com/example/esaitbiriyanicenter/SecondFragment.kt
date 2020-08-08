@@ -1,16 +1,20 @@
 package com.restaurant.esaitbiriyanicenter
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.esaitbiriyanicenter.DatabaseHandler
+import com.example.esaitbiriyanicenter.EmpModelClass
 import kotlinx.android.synthetic.main.fragment_second.*
 import java.lang.Exception
 
@@ -19,17 +23,51 @@ import java.lang.Exception
  */
 class SecondFragment : Fragment() {
 
-
+    var i = "100"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_second, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
+        super.onCreate(savedInstanceState)
+        var c = 0
+
+        //fun viewRecord(context: Context?){
+        //creating the instance of DatabaseHandler class
+        val databaseHandler: DatabaseHandler= DatabaseHandler(context)
+        //calling the viewEmployee method of DatabaseHandler class to read the records
+        val emp: List<EmpModelClass> = databaseHandler.viewEmployee()
+
+        val empArrayId = Array<String>(emp.size){"0"}
+        val empArrayName = Array<String>(emp.size){"null"}
+        val empArrayEmail = Array<String>(emp.size){"null"}
+        val empArrayphone = Array<String>(emp.size){"null"}
+        var index = 0
+        for(e in emp){
+            empArrayId[index] = e.userId.toString()
+            empArrayName[index] = e.userName
+            empArrayEmail[index] = e.userEmail
+            empArrayphone[index] = e.userphone
+        }
+        //}
+        if(emp.isNotEmpty()){
+            if(empArrayId[0] == "100") {
+                editTextPhone.setText(empArrayphone[0]);
+                editTextAddress.setText(empArrayName[0]);
+                editTextTextEmailName.setText(empArrayEmail[0]);
+                c = 1
+            }
+
+        }
+        //check from the database if recode exist.
+        //if record exist, fetch the value from the db and show
+
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_ios_24);
         toolbar.setNavigationOnClickListener(View.OnClickListener {
             this.findNavController()
@@ -42,6 +80,18 @@ class SecondFragment : Fragment() {
         grand_total.text = grandTotal;
 
         submitbutton.setOnClickListener(View.OnClickListener {
+            //checkbox
+            if(checkBox4.isChecked){
+                //save detail user detail pto sqlite database
+                if(c == 0){
+                    saveRecord(context);
+                }
+                else{
+                    updateRecord(context)
+                }
+
+
+            }
             if(editTextTextEmailName.text.toString().equals("") || editTextAddress.text.toString().equals("") || editTextPhone.text.toString().equals("")) {
                 Toast.makeText(context,"All fields are mandatory",Toast.LENGTH_SHORT).show();
             } else {
@@ -59,6 +109,7 @@ class SecondFragment : Fragment() {
                         finalWhatsAppMessage+= "Comments : "+editTextComments.text + "\n";
                         val toNumber = "917299158123";
                         try {
+
                             val intent = Intent(Intent.ACTION_VIEW)
                             intent.setData(Uri.parse("http://api.whatsapp.com/send?phone="+toNumber +"&text="+finalWhatsAppMessage));
                             startActivity(intent)
@@ -82,4 +133,49 @@ class SecondFragment : Fragment() {
             }
         })
     }
+    fun saveRecord(context: Context?){
+        val id = i.toString()
+        val name = editTextAddress.text.toString()
+        val email = editTextTextEmailName.text.toString()
+        val phone = editTextPhone.text.toString()
+        val databaseHandler: DatabaseHandler = DatabaseHandler( context )
+        if(id.trim()!="" && name.trim()!="" && email.trim()!=""){
+            val status = databaseHandler.addEmployee(EmpModelClass(Integer.parseInt(id),name, email,phone))
+            if(status > -1){
+                var applicationContext = null
+                Toast.makeText(context,"record save",Toast.LENGTH_LONG).show()
+
+            }
+        }
+
+    }
+
+    fun updateRecord(context: Context?){
+        //val dialogBuilder = AlertDialog.Builder(this)
+        //val inflater = this.layoutInflater
+        //val dialogView = inflater.inflate(R.layout.update_dialog, null)
+        /*dialogBuilder.setView(dialogView)
+
+        val edtId = dialogView.findViewById(R.id.editTextPhone) as EditText
+        val edtName = dialogView.findViewById(R.id.editTextAddress) as EditText
+        val edtEmail = dialogView.findViewById(R.id.editTextTextEmailName) as EditText
+
+        dialogBuilder.setTitle("Update Record")
+        dialogBuilder.setMessage("Enter data below")
+        dialogBuilder.setPositiveButton("Update", DialogInterface.OnClickListener { _, _ ->*/
+
+        val updateId = i.toString()
+        val updateName = editTextAddress.text.toString()
+        val updateEmail = editTextTextEmailName.text.toString()
+        val updatephone = editTextPhone.text.toString()
+        //creating the instance of DatabaseHandler class
+        val databaseHandler: DatabaseHandler= DatabaseHandler(context)
+        if(updateId.trim()!="" && updateName.trim()!="" && updateEmail.trim()!="" && updatephone.trim()!=""){
+            //calling the updateEmployee method of DatabaseHandler class to update record
+            val status = databaseHandler.updateEmployee(EmpModelClass(Integer.parseInt(updateId),updateName, updateEmail, updatephone))
+        }
+
+
+    }
+
 }

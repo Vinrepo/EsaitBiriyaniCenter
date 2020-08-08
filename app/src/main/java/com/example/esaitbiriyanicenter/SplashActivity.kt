@@ -11,8 +11,6 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
-
-
         handler = Handler()
         handler!!.postDelayed(Runnable {
             val intent = Intent(this,MainActivity::class.java)
@@ -21,3 +19,4 @@ class SplashActivity : AppCompatActivity() {
         }, 2000)
     }
 }
+

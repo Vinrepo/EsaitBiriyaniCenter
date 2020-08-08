@@ -26,5 +26,6 @@
     <string name="whatsappinfo">NOTE : As of now we use WhatsApp for confirmation of order so Order will be confirmed regarding availability of stock through WhatsApp chat.</string>
     <string name="dialogMessage">We will be redirecting you to whatsapp now for order placement, please click send from there to our shop.</string>
     <string name="dialogMessageSpecialPacking">Special packing will be done like this.</string>
+    <string name="cbstr">Save Details</string>
 
 </resources>
