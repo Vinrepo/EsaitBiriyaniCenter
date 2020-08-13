@@ -27,5 +27,10 @@
     <string name="dialogMessage">We will be redirecting you to whatsapp now for order placement, please click send from there to our shop.</string>
     <string name="dialogMessageSpecialPacking">Special packing will be done like this.</string>
     <string name="cbstr">Save Details</string>
+    <string name="closed">We are sorry</string>
+    <string name="shopclose">The Shop has closed</string>
+    <string name="time">Timing : 10AM TO 10PM </string>
+    <string name="timee">We are Open during</string>
+    <string name="btclose">Close</string>
 
 </resources>

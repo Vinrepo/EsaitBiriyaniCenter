@@ -5,14 +5,15 @@ import com.google.gson.annotations.SerializedName
 
 data class Availability(
     @SerializedName("range")
-    val range: String,
+    var range: String,
     @SerializedName("majorDimension")
-    val majorDimension: String,
+    var majorDimension: String,
     @SerializedName("values")
-    val values: ArrayList<Item>
+    var values: ArrayList<Item>
+
 )
 
 data class Item(
-    val bookName: String,
-    val availability: String
+    var bookName: String,
+    var availability: String
 )

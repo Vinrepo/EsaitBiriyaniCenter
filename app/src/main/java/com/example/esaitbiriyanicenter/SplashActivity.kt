@@ -12,6 +12,7 @@ import com.android.volley.Response
 import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.esaitbiriyanicenter.MainActivity2
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -58,6 +59,9 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             } else if(list.get(0).get("availability").equals("closed")){
+                val intent = Intent(this, MainActivity2::class.java)
+                startActivity(intent)
+                finish()
                 Toast.makeText(applicationContext,"Shop Closed!",Toast.LENGTH_SHORT).show();
             }
         } catch (e: JSONException) {
