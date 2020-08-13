@@ -11,10 +11,10 @@ import com.restaurant.esaitbiriyanicenter.R
 import kotlinx.android.synthetic.main.activity_main2.*
 
 
-class MainActivity2 : AppCompatActivity() {
+class ShopClosedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main2)
+        setContentView(R.layout.shop_closed)
         close_button.setOnClickListener(View.OnClickListener {
             finish()
         })

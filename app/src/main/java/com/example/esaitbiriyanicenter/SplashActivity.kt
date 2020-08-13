@@ -2,9 +2,6 @@ package com.restaurant.esaitbiriyanicenter
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.widget.SimpleAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
@@ -12,7 +9,7 @@ import com.android.volley.Response
 import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.esaitbiriyanicenter.MainActivity2
+import com.example.esaitbiriyanicenter.ShopClosedActivity
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -59,10 +56,9 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             } else if(list.get(0).get("availability").equals("closed")){
-                val intent = Intent(this, MainActivity2::class.java)
+                val intent = Intent(this, ShopClosedActivity::class.java)
                 startActivity(intent)
                 finish()
-                Toast.makeText(applicationContext,"Shop Closed!",Toast.LENGTH_SHORT).show();
             }
         } catch (e: JSONException) {
             e.printStackTrace()

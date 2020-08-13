@@ -28,8 +28,8 @@
     <string name="dialogMessageSpecialPacking">Special packing will be done like this.</string>
     <string name="cbstr">Save Details</string>
     <string name="closed">We are sorry</string>
-    <string name="shopclose">The Shop has closed</string>
-    <string name="time">Timing : 10AM TO 10PM </string>
+    <string name="shopclose">Sorry we are closed now.</string>
+    <string name="time">11AM TO 3PM\n 6PM TO 9PM</string>
     <string name="timee">We are Open during</string>
     <string name="btclose">Close</string>
 
