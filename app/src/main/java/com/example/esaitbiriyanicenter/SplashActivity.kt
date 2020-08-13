@@ -51,11 +51,11 @@ class SplashActivity : AppCompatActivity() {
                 item["availability"] = brand
                 list.add(item)
             }
-            if(list.get(0).get("availability").equals("open")) {
+            if(list.get(0).get("availability").equals("1")) {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
-            } else if(list.get(0).get("availability").equals("closed")){
+            } else if(list.get(0).get("availability").equals("0")){
                 val intent = Intent(this, ShopClosedActivity::class.java)
                 startActivity(intent)
                 finish()
