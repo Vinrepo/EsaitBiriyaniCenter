@@ -3,41 +3,68 @@ package com.restaurant.esaitbiriyanicenter
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import android.widget.SimpleAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.esaitbiriyanicenter.Availability
-import com.restaurant.esaitbiriyanicenter.api.APIClient
-import com.restaurant.esaitbiriyanicenter.api.ApiInterface
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.RetryPolicy
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class SplashActivity : AppCompatActivity() {
-    var handler: Handler? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
-        val call = APIClient.client.create(ApiInterface::class.java).getBooks()
-        call.enqueue(object : Callback<Availability> {
-            override fun onResponse(call: Call<Availability>, response: Response<Availability>) {
-                Log.d("Success!", response.toString())
-                var text = response.body()
-                var bookList = text?.values
-            }
-
-            override fun onFailure(call: Call<Availability>, t: Throwable)                  {
-                Log.e("Failed Query :(", t.toString())
-
-            }
-        })
+        getItems();
     }
-        /*handler = Handler()
-        handler!!.postDelayed(Runnable {
-            val intent = Intent(this,MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 2000)*/
+
+    private fun getItems() {
+        //loading = ProgressDialog.show(this, "Loading", "please wait", false, true)
+        val stringRequest = StringRequest(
+            Request.Method.GET,
+            "https://script.google.com/macros/s/AKfycbwbdLqmiFybgjp58eyPwRYrdP8Fkatr5f8rynjVFeZi1HiblLUS/exec?action=getItems",
+            Response.Listener { response -> parseItems(response) },
+            Response.ErrorListener { }
+        )
+        val socketTimeOut = 50000
+        val policy: RetryPolicy =
+            DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        stringRequest.retryPolicy = policy
+        val queue = Volley.newRequestQueue(this)
+        queue.add(stringRequest)
     }
+
+    private fun parseItems(jsonResposnce: String) {
+        val list: ArrayList<HashMap<String, String?>> = ArrayList()
+        try {
+            val jobj = JSONObject(jsonResposnce)
+            val jarray = jobj.getJSONArray("items")
+            for (i in 0 until jarray.length()) {
+                val jo = jarray.getJSONObject(i)
+                val itemName = jo.getString("name")
+                val brand = jo.getString("availability")
+                val item: HashMap<String, String?> = HashMap()
+                item["name"] = itemName
+                item["availability"] = brand
+                list.add(item)
+            }
+            if(list.get(0).get("availability").equals("open")) {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else if(list.get(0).get("availability").equals("closed")){
+                Toast.makeText(applicationContext,"Shop Closed!",Toast.LENGTH_SHORT).show();
+            }
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+    }
+}
 
 
