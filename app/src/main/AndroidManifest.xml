@@ -3,6 +3,8 @@
     package="com.restaurant.esaitbiriyanicenter">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -11,8 +13,9 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.esaitbiriyanicenter.ShopClosedActivity"
-            android:theme = "@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="com.example.esaitbiriyanicenter.ShopClosedActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SplashActivity"
             android:label="@string/app_name"

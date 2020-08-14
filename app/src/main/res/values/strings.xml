@@ -32,5 +32,8 @@
     <string name="time">11AM TO 3PM\n 6PM TO 9PM</string>
     <string name="timee">We are Open during</string>
     <string name="btclose">Close</string>
+    <string name="appname">KotlipApp</string>
+    <string name="latitudeBabel">Latitude</string>
+    <string name="longitudeBabel">Longitude</string>
 
 </resources>
