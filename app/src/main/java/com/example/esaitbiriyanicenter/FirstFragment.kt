@@ -93,7 +93,7 @@ class FirstFragment : Fragment() {
                     )
                     val fin = Distance*1.60934
                     distance = fin * 1.6;
-
+                    //We got the distance, now lets calculate deilvery charges based on distance
                     deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
                     var deliveryChargesText = textView2.text.toString();
                     deliveryChargesText = deliveryCharges.toString().format("%s",deliveryCharges);
