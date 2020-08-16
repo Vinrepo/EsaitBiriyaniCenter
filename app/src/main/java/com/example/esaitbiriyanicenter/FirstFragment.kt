@@ -18,6 +18,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -48,10 +49,9 @@ import kotlin.math.cos
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class FirstFragment : Fragment() {
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    lateinit var locationRequest: LocationRequest
-    val PERMISSION_ID = 1010
-    var distance = 0.0;
+    var fusedLocationClient: FusedLocationProviderClient? = null
+    val PERMISSION_ID = 42
+    var deliveryCharges = 0;
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,12 +66,44 @@ class FirstFragment : Fragment() {
         toolbar.setTitle("Esait Biriyani center");
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
         /*** Distance calculation ****/
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient( requireContext())
-        Log.d("Debug:",CheckPermission().toString())
-        Log.d("Debug:",isLocationEnabled().toString())
-        RequestPermission()
-        getLastLocation()
-        Toast.makeText(context,distance.toString(),Toast.LENGTH_SHORT).show()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        var distance = 0.0;
+        if (checkPermission(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            fusedLocationClient?.lastLocation?.addOnSuccessListener(requireActivity(),{location : Location? ->
+                // Got last known location. In some rare
+                // situations this can be null.
+                if(location == null) {
+                    // TODO, handle it
+                } else location.apply {
+                    // Handle location object
+                    Log.e("LOG", location.toString())
+                    var currentLocationLat = location.latitude;
+                    var currentLocationLong = location.longitude;
+                    val long1 = 80.1266854 / 57.29577951
+                    val lat1 = 12.9231058 / 57.29577951
+                    val long2 = currentLocationLong / 57.29577951
+                    val lat2 = currentLocationLat / 57.29577951
+
+                    val Distance = 3963.0 * StrictMath.acos(
+                        (StrictMath.sin(lat1) * StrictMath.sin(
+                            lat2
+                        )) + cos(lat1) * cos(lat2) * cos(long2 - long1)
+                    )
+                    val fin = Distance*1.60934
+                    distance = fin * 1.6;
+
+                    deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
+                    var deliveryChargesText = textView2.text.toString();
+                    deliveryChargesText = deliveryCharges.toString().format("%s",deliveryCharges);
+                    textView2.text = deliveryChargesText;
+                    if(deliveryCharges >50){
+                        distancefee.visibility = View.VISIBLE;
+                    }
+                }
+            })
+        }
         /*** Distance calculation ****/
 
         val childList1: MutableList<Child> = ArrayList()
@@ -185,14 +217,20 @@ class FirstFragment : Fragment() {
             }
 
             if (grandTotal > 0) {
+                //check grandTotal value
+                //grandTotal < 500 - all fees applicable
+                //grandTotal > 500 and distance <10kms - delivery charges free
+                //grandTotal > 1000 - 10% from total
+
                 var specialPacking = "";
                 if (specialPackingCharges > 0) {
                     grandTotal += specialPackingCharges;
                     orderSummary += "Special packing charges " + "                               ₹" + specialPackingCharges + "\n";
                 }
+
                 var grandTotalStr =
-                    "Grand Total " + "                                               ₹" + (grandTotal + 30);
-                orderSummary += "Delivery Charges                                             ₹30";
+                    "Grand Total " + "                                               ₹" + (grandTotal + deliveryCharges);
+                orderSummary += "Delivery Charges                                             ₹"+deliveryCharges;
                 val bundle =
                     bundleOf("orderSummary" to orderSummary, "grandTotal" to grandTotalStr);
                 this.findNavController()
@@ -208,6 +246,68 @@ class FirstFragment : Fragment() {
 
     }
 
+    /*************** USER LOCATION TRACKING *********************************/
+    private fun checkPermission(vararg perm:String) : Boolean {
+        val havePermissions = perm.toList().all {
+            ContextCompat.checkSelfPermission(requireContext(),it) ==
+                    PackageManager.PERMISSION_GRANTED
+        }
+        if (!havePermissions) {
+            if(perm.toList().any {
+                    ActivityCompat.
+                    shouldShowRequestPermissionRationale(requireActivity(), it)}
+            ) {
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle("Permission")
+                    .setMessage("Permission needed!")
+                    .setPositiveButton("OK", {id, v ->
+                        ActivityCompat.requestPermissions(
+                            requireActivity(), perm, PERMISSION_ID)
+                    })
+                    .setNegativeButton("No", {id, v -> })
+                    .create()
+                dialog.show()
+            } else {
+                ActivityCompat.requestPermissions(requireActivity(), perm, PERMISSION_ID)
+            }
+            return false
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_ID -> {
+                //Handle some logic here
+            }
+        }
+    }
+
+    /*************** USER LOCATION TRACKING *********************************/
+
+    /**************** Distance based Delivery charges calculation ********************************************/
+    fun getDeliveryChargesBasedOnDistance(distance:Double) : Int {
+        if(distance<3){
+            return 30;
+        } else if(distance>3 && distance<6) {
+            return 50;
+        } else if(distance>6 && distance<8){
+            return 80;
+        } else if(distance>8 && distance<10){
+            return 100;
+        } else if(distance>10 && distance<15){
+            return 150;
+        } else {
+            return 0;
+        }
+    }
+
+    /**************** Distance based Delivery charges calculation ********************************************/
+
+
+
+    /*************** Block of code will be used later for the menu items availability logic *********************************/
     private fun getItems() {
         val stringRequest = StringRequest(
             Request.Method.GET,
@@ -245,141 +345,9 @@ class FirstFragment : Fragment() {
         }
     }
 
-    fun RequestPermission(){
-        //this function will allows us to tell the user to requesut the necessary permsiion if they are not garented
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION),
-            PERMISSION_ID
-        )
-    }
-    fun isLocationEnabled():Boolean{
-        //this function will return to us the state of the location service
-        //if the gps or the network provider is enabled then it will return true otherwise it will return false
-
-        var locationManager = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER)
-    }
-    fun getLastLocation(){
-
-        if(CheckPermission()){
-            if(isLocationEnabled()){
-                if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                   return
-                }
-                fusedLocationProviderClient.lastLocation.addOnCompleteListener { task->
-                    var location: Location? = task.result
-                    if(location == null){
-                        Toast.makeText(context,"Please new",Toast.LENGTH_SHORT).show()
-                        NewLocationData()
-                    }else{
-                        Toast.makeText(context,"ruunned",Toast.LENGTH_SHORT).show()
-                        val long1 = 80.1266854 / 57.29577951
-                        val lat1 = 12.9231058 / 57.29577951
-                        val long2 = location.longitude / 57.29577951
-                        val lat2 = location.latitude / 57.29577951
-
-                        val Distance = 3963.0 * StrictMath.acos(
-                            (StrictMath.sin(lat1) * StrictMath.sin(
-                                lat2
-                            )) + cos(lat1) * cos(lat2) * cos(long2 - long1)
-                        )
-                       val fin = Distance*1.60934
-                        distance = fin * 1.6;
-                        //Log.d("Debug:" ,"Your Location:"+ location.longitude)
-                        //Toast.makeText(context,"lon"+location.longitude,Toast.LENGTH_SHORT).show()
-                        //editTextTextEmailName.text = "You Current Location is : Long: "+ location.longitude + " , Lat: " + location.latitude + "\n"
-
-                    }
-
-                }
-            }else{
-                Toast.makeText(context,"Please Turn on Your device Location",Toast.LENGTH_SHORT).show()
-            }
-
-        }else{
-            RequestPermission()
-        }
-
-    }
-    fun NewLocationData(){
-        var locationRequest =  LocationRequest()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 0
-        locationRequest.fastestInterval = 0
-        locationRequest.numUpdates = 1
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationProviderClient!!.requestLocationUpdates(
-            locationRequest,locationCallback, Looper.myLooper()
-        )
-
-    }
+    /*************** Block of code will be used later for the menu items availability logic *********************************/
 
 
-    private val locationCallback = object : LocationCallback(){
-        override fun onLocationResult(locationResult: LocationResult) {
-            var lastLocation: Location = locationResult.lastLocation
-            Log.d("Debug:","your last last location: "+ lastLocation.longitude.toString())
-            //textView.text = "You Last Location is : Long: "+ lastLocation.longitude + " , Lat: " + lastLocation.latitude + "\n" + getCityName(lastLocation.latitude,lastLocation.longitude)
-        }
-    }
-    private fun getCityName(lat: Double,long: Double):String{
-        var cityName:String = ""
-        var countryName = ""
-        var geoCoder = Geocoder(requireContext(), Locale.getDefault())
-        var Adress = geoCoder.getFromLocation(lat,long,3)
-
-        cityName = Adress.get(0).locality
-        countryName = Adress.get(0).countryName
-        Log.d("Debug:","Your City: " + cityName + " ; your Country " + countryName)
-        return cityName
-    }
-
-    fun CheckPermission():Boolean{
-        //this function will return a boolean
-        //true: if we have permission
-        //false if not
-        if(
-            ActivityCompat.checkSelfPermission(requireContext(),android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(requireContext(),android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        ){
-            return true
-        }
-
-        return false
-
-    }
 
 }
+

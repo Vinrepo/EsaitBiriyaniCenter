@@ -20,7 +20,8 @@
     <string name="additional_info">* Address</string>
     <string name="your_name">* Your Name</string>
     <string name="special_packing">Special packing ₹20/pack(Not applicable for Chicken 65)</string>
-    <string name="delivery_charges_info">Delivery charges ₹30 and additional charges will be applicable if exceeding 3kms from the restaurant.</string>
+    <string name="delivery_charges_info">Delivery charges ₹%s</string>
+    <string name="distance_fee_applicable">(Distance fee applicable)</string>
     <string name="proceed">Proceed to Order</string>
     <string name="additional_comments">Comments</string>
     <string name="whatsappinfo">NOTE : As of now we use WhatsApp for confirmation of order so Order will be confirmed regarding availability of stock through WhatsApp chat.</string>
