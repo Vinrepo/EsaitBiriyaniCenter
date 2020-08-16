@@ -177,8 +177,9 @@
                     <Button
                         android:id="@+id/submitbutton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorAccent"
+
+                        android:layout_height="50dp"
+                        android:background="@drawable/proceed"
                         android:text="@string/submit"
                         android:textColor="#FFFFFF"
                         android:layout_marginTop="100dp"/>
