@@ -96,9 +96,9 @@ class FirstFragment : Fragment() {
                     //We got the distance, now lets calculate deilvery charges based on distance
                     deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
                     var deliveryChargesText = textView2.text.toString();
-                    deliveryChargesText = deliveryCharges.toString().format("%s",deliveryCharges);
+                    deliveryChargesText = String.format(deliveryChargesText,deliveryCharges);
                     textView2.text = deliveryChargesText;
-                    if(deliveryCharges >50){
+                    if(deliveryCharges >=50){
                         distancefee.visibility = View.VISIBLE;
                     }
                 }
@@ -217,20 +217,28 @@ class FirstFragment : Fragment() {
             }
 
             if (grandTotal > 0) {
-                //check grandTotal value
-                //grandTotal < 500 - all fees applicable
-                //grandTotal > 500 and distance <10kms - delivery charges free
-                //grandTotal > 1000 - 10% from total
-
-                var specialPacking = "";
+                if((grandTotal > 500 && grandTotal <1000) && distance <10){
+                    deliveryCharges = 0;
+                }
                 if (specialPackingCharges > 0) {
                     grandTotal += specialPackingCharges;
                     orderSummary += "Special packing charges " + "                               ₹" + specialPackingCharges + "\n";
                 }
+                grandTotal = grandTotal + deliveryCharges;
+                var discountedPrice = 0;
+                if(grandTotal>1000) {
+                    discountedPrice = grandTotal/10;
+                    grandTotal = grandTotal - grandTotal/10;
+                }
+
+
 
                 var grandTotalStr =
-                    "Grand Total " + "                                               ₹" + (grandTotal + deliveryCharges);
-                orderSummary += "Delivery Charges                                             ₹"+deliveryCharges;
+                    "Grand Total " + "                                               ₹" + grandTotal;
+                orderSummary += "Delivery Charges                                             ₹"+deliveryCharges+"\n";
+                if(discountedPrice>0){
+                    orderSummary += "10% Discount                                                  -₹"+discountedPrice;
+                }
                 val bundle =
                     bundleOf("orderSummary" to orderSummary, "grandTotal" to grandTotalStr);
                 this.findNavController()
