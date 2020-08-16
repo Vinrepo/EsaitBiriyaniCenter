@@ -14,6 +14,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +31,7 @@ import com.android.volley.Response
 import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.esaitbiriyanicenter.ImageSliderAdapter
 import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.fragment_first.toolbar
 import kotlinx.android.synthetic.main.fragment_second.*
@@ -37,6 +40,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.*
+import kotlinx.android.synthetic.main.layout_popup.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -64,8 +68,14 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
         toolbar.setTitle("Esait Biriyani center");
+
+        //imageslider fun call
+        imageSliderImplementation()
+
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
         /*** Distance calculation ****/
+
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         var distance = 0.0;
         if (checkPermission(
@@ -93,11 +103,12 @@ class FirstFragment : Fragment() {
                     )
                     val fin = Distance*1.60934
                     distance = fin * 1.6;
-                    //We got the distance, now lets calculate deilvery charges based on distance
+
                     deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
                     var deliveryChargesText = textView2.text.toString();
                     deliveryChargesText = String.format(deliveryChargesText,deliveryCharges);
-                    textView2.text = deliveryChargesText;
+                    //deliveryChargesText = "Delivery charges "+deliveryCharges
+                    textView2.setText(deliveryChargesText);
                     if(deliveryCharges >=50){
                         distancefee.visibility = View.VISIBLE;
                     }
@@ -105,6 +116,9 @@ class FirstFragment : Fragment() {
             })
         }
         /*** Distance calculation ****/
+
+
+
 
         val childList1: MutableList<Child> = ArrayList()
         childList1.add(Child("Mutton Biriyani  ₹270/pack"));
@@ -351,6 +365,13 @@ class FirstFragment : Fragment() {
         } catch (e: JSONException) {
             e.printStackTrace()
         }
+    }
+    private fun imageSliderImplementation() {
+
+        val adapter = ImageSliderAdapter(requireContext())
+        viewpager.adapter = adapter
+
+
     }
 
     /*************** Block of code will be used later for the menu items availability logic *********************************/
