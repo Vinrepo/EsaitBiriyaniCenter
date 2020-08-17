@@ -363,7 +363,7 @@ class FirstFragment : Fragment() {
             3000 // time in milliseconds between successive task executions.
 
         val adapter = ImageSliderAdapter(requireContext())
-        viewpager.adapter = adapter
+        viewpager?.adapter = adapter
         /*After setting the adapter use the timer */
 
         /*After setting the adapter use the timer */
@@ -372,7 +372,7 @@ class FirstFragment : Fragment() {
             if (currentPage === 4) {
                 currentPage = 0
             }
-            viewpager.setCurrentItem(currentPage++, true)
+            viewpager?.setCurrentItem(currentPage++, true)
         }
 
         timer = Timer() // This will create a new Thread
