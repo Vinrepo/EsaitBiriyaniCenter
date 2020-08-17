@@ -8,8 +8,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.RetryPolicy
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.restaurant.esaitbiriyanicenter.R
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
+import kotlinx.android.synthetic.main.section_child.*
+import org.json.JSONException
+import org.json.JSONObject
 
 class AdapterSectionRecycler(context: Context, sectionItemList: MutableList<SectionHeader>,navController : NavController) : SectionRecyclerViewAdapter<SectionHeader, Child, SectionViewHolder, ChildViewHolder>(
     context, sectionItemList
@@ -56,4 +65,5 @@ class AdapterSectionRecycler(context: Context, sectionItemList: MutableList<Sect
             }
         });
     }
+
 }

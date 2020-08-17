@@ -2,6 +2,7 @@ package com.restaurant.esaitbiriyanicenter
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -25,10 +26,13 @@ import com.android.volley.Response
 import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.esaitbiriyanicenter.ImageSliderAdapter
+import com.example.esaitbiriyanicenter.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.fragment_first.*
+import kotlinx.android.synthetic.main.fragment_first.toolbar
+import kotlinx.android.synthetic.main.fragment_second.*
+import kotlinx.android.synthetic.main.section_child.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -44,12 +48,28 @@ class FirstFragment : Fragment() {
     var fusedLocationClient: FusedLocationProviderClient? = null
     val PERMISSION_ID = 42
     var deliveryCharges = 0;
+
+    //calling the viewEmployee method of DatabaseHandler class to read the records
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        /***offer popup menu***/
+        val builder = AlertDialog.Builder(context);
+        val factory = LayoutInflater.from(context)
+        val view: View = factory.inflate(R.layout.offer_popup_menu, null)
+        builder.setView(view)
+        builder.setMessage(R.string.offer);
+        builder.setPositiveButton("Ok") { dialogInterface, which ->
+            dialogInterface.dismiss();
+        }
+        builder.show()
+        /***offer popup menu***/
         return inflater.inflate(R.layout.fragment_first, container, false)
+
 
     }
 
@@ -57,6 +77,13 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState);
         toolbar.setTitle("Esait Biriyani center");
 
+
+
+
+
+
+
+        //getItems()
         //imageslider fun call
         imageSliderImplementation()
 
@@ -91,6 +118,7 @@ class FirstFragment : Fragment() {
                     )
                     val fin = Distance*1.60934
                     distance = fin * 1.6;
+
 
                     deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
                     var deliveryChargesText = textView2.text.toString();
@@ -219,6 +247,18 @@ class FirstFragment : Fragment() {
             }
 
             if (grandTotal > 0) {
+                if(distance>15) {
+                    val builder = AlertDialog.Builder(context);
+                    val factory = LayoutInflater.from(context)
+                    val view: View = factory.inflate(R.layout.sorry, null)
+                    builder.setView(view)
+                    builder.setMessage(R.string.sorry);
+                    builder.setPositiveButton("Its Ok") { dialogInterface, which ->
+                        dialogInterface.dismiss();
+                    }
+                    builder.show()
+
+                }
                 if((grandTotal > 500 && grandTotal <1000) && distance <10){
                     deliveryCharges = 0;
                 }
@@ -346,6 +386,16 @@ class FirstFragment : Fragment() {
                 item["name"] = itemName
                 item["availability"] = brand
                 list.add(item)
+            }
+            if(list.get(1).get("availability").equals("0")) {
+
+
+            } else if(list.get(2).get("availability").equals("0")){
+                plus.isEnabled = false
+                plus.isClickable = false
+
+
+
             }
             //Read shop value and redirect
             //if shop open, redirect to normal menu items screen
