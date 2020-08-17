@@ -2,20 +2,14 @@ package com.restaurant.esaitbiriyanicenter
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,15 +26,9 @@ import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.esaitbiriyanicenter.ImageSliderAdapter
-import kotlinx.android.synthetic.main.fragment_first.*
-import kotlinx.android.synthetic.main.fragment_first.toolbar
-import kotlinx.android.synthetic.main.fragment_second.*
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.*
-import kotlinx.android.synthetic.main.layout_popup.*
+import kotlinx.android.synthetic.main.fragment_first.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -367,10 +355,34 @@ class FirstFragment : Fragment() {
         }
     }
     private fun imageSliderImplementation() {
+        var currentPage = 0
+        val timer: Timer
+        val DELAY_MS: Long = 500 //delay in milliseconds before task is to be executed
+
+        val PERIOD_MS: Long =
+            3000 // time in milliseconds between successive task executions.
 
         val adapter = ImageSliderAdapter(requireContext())
         viewpager.adapter = adapter
+        /*After setting the adapter use the timer */
 
+        /*After setting the adapter use the timer */
+        val handler = Handler()
+        val Update = Runnable {
+            if (currentPage === 4) {
+                currentPage = 0
+            }
+            viewpager.setCurrentItem(currentPage++, true)
+        }
+
+        timer = Timer() // This will create a new Thread
+
+        timer.schedule(object : TimerTask() {
+            // task to be scheduled
+            override fun run() {
+                handler.post(Update)
+            }
+        }, DELAY_MS, PERIOD_MS)
 
     }
 
