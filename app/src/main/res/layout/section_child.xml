@@ -20,14 +20,14 @@
 
     <TextView
         android:id="@+id/minus"
-        android:layout_width="40dp"
+        android:layout_width="45dp"
         android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginRight="80dp"
-        android:text=""
+        android:text="-"
         android:textColor="@color/cardview_light_background"
-        android:background="@drawable/minus"
+        android:background="@color/colorAccent"
         android:textSize="28sp"
         android:paddingLeft="15dp"
         android:paddingBottom="6dp"
@@ -48,14 +48,14 @@
 
     <TextView
         android:id="@+id/plus"
-        android:layout_width="40dp"
+        android:layout_width="45dp"
         android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginRight="10dp"
-        android:text=""
+        android:text="+"
         android:textColor="@color/cardview_light_background"
-        android:background="@drawable/plus"
+        android:background="@color/colorAccent"
         android:textSize="28sp"
         android:paddingLeft="17dp"
         />

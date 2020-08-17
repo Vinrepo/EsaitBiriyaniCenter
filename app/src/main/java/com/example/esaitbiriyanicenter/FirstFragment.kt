@@ -2,7 +2,7 @@ package com.restaurant.esaitbiriyanicenter
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Intent
+import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -26,12 +26,10 @@ import com.android.volley.Response
 import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.esaitbiriyanicenter.*
+import com.example.esaitbiriyanicenter.ImageSliderAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.fragment_first.*
-import kotlinx.android.synthetic.main.fragment_first.toolbar
-import kotlinx.android.synthetic.main.fragment_second.*
 import kotlinx.android.synthetic.main.section_child.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -57,35 +55,16 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        /***offer popup menu***/
-        val builder = AlertDialog.Builder(context);
-        val factory = LayoutInflater.from(context)
-        val view: View = factory.inflate(R.layout.offer_popup_menu, null)
-        builder.setView(view)
-        builder.setMessage(R.string.offer);
-        builder.setPositiveButton("Ok") { dialogInterface, which ->
-            dialogInterface.dismiss();
-        }
-        builder.show()
-        /***offer popup menu***/
         return inflater.inflate(R.layout.fragment_first, container, false)
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
         toolbar.setTitle("Esait Biriyani center");
-
-
-
-
-
-
-
+        checkFirstRun();
         //getItems()
         //imageslider fun call
-        imageSliderImplementation()
+        imageSliderImplementation();
 
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
         /*** Distance calculation ****/
@@ -118,8 +97,9 @@ class FirstFragment : Fragment() {
                     )
                     val fin = Distance*1.60934
                     distance = fin * 1.6;
-
-
+                    if(distance>15) {
+                       //Navigate to sorry fragment
+                    }
                     deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
                     var deliveryChargesText = textView2.text.toString();
                     deliveryChargesText = String.format(deliveryChargesText,deliveryCharges);
@@ -247,18 +227,7 @@ class FirstFragment : Fragment() {
             }
 
             if (grandTotal > 0) {
-                if(distance>15) {
-                    val builder = AlertDialog.Builder(context);
-                    val factory = LayoutInflater.from(context)
-                    val view: View = factory.inflate(R.layout.sorry, null)
-                    builder.setView(view)
-                    builder.setMessage(R.string.sorry);
-                    builder.setPositiveButton("Its Ok") { dialogInterface, which ->
-                        dialogInterface.dismiss();
-                    }
-                    builder.show()
 
-                }
                 if((grandTotal > 500 && grandTotal <1000) && distance <10){
                     deliveryCharges = 0;
                 }
@@ -393,9 +362,6 @@ class FirstFragment : Fragment() {
             } else if(list.get(2).get("availability").equals("0")){
                 plus.isEnabled = false
                 plus.isClickable = false
-
-
-
             }
             //Read shop value and redirect
             //if shop open, redirect to normal menu items screen
@@ -408,7 +374,6 @@ class FirstFragment : Fragment() {
         var currentPage = 0
         val timer: Timer
         val DELAY_MS: Long = 500 //delay in milliseconds before task is to be executed
-
         val PERIOD_MS: Long =
             3000 // time in milliseconds between successive task executions.
 
@@ -437,8 +402,23 @@ class FirstFragment : Fragment() {
     }
 
     /*************** Block of code will be used later for the menu items availability logic *********************************/
-
-
-
+     fun checkFirstRun(): Unit {
+        val isFirstRun = context?.getSharedPreferences("PREFERENCE", MODE_PRIVATE)?.getBoolean("isFirstRun", true);
+        if(isFirstRun!!) {
+            context?.getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                ?.edit()
+                ?.putBoolean("isFirstRun", false)
+                ?.apply()
+            val builder = AlertDialog.Builder(context);
+            val factory = LayoutInflater.from(context)
+            val view: View = factory.inflate(R.layout.offer_popup_menu, null)
+            builder.setView(view)
+            builder.setMessage(R.string.offer);
+            builder.setPositiveButton("Ok") { dialogInterface, which ->
+                dialogInterface.dismiss();
+            }
+            builder.show()
+        }
+    }
 }
 

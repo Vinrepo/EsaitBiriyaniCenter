@@ -13,7 +13,8 @@ class ImageSliderAdapter(context: Context) : PagerAdapter() {
 
     var context: Context? = context;
     private var inflater: LayoutInflater? = null
-    private val images = arrayOf(R.drawable.biriyani_1, R.drawable.biriyani_2, R.drawable.biriyani_3, R.drawable.chicken_65)
+    //private val images = arrayOf(R.drawable.biriyani_1, R.drawable.biriyani_2, R.drawable.biriyani_3, R.drawable.chicken_65)
+    private val images = arrayOf(R.drawable.ic_launcher,R.drawable.halal)
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
 
