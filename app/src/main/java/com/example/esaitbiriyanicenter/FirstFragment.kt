@@ -271,52 +271,6 @@ class FirstFragment : Fragment() {
 
     }
 
- /*   fun getLocation() {
-        var locationManager = context?.getSystemService(LOCATION_SERVICE) as LocationManager?
-
-        var locationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location?) {
-                var latitute = location!!.latitude
-                var longitute = location!!.longitude
-                Log.i("test", "Latitute: $latitute ; Longitute: $longitute")
-
-            }
-
-            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-            }
-
-            override fun onProviderEnabled(provider: String?) {
-            }
-
-            override fun onProviderDisabled(provider: String?) {
-            }
-        }
-
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSION_REQUEST_ACCESS_FINE_LOCATION)
-            return
-        }
-        locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_ACCESS_FINE_LOCATION) {
-            when (grantResults[0]) {
-                PackageManager.PERMISSION_GRANTED -> getLocation()
-                //PackageManager.PERMISSION_DENIED -> //Tell to user the need of grant permission
-            }
-        }
-    }
-
-    companion object {
-        private const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 100
-    }*/
-
     /*************** USER LOCATION TRACKING *********************************/
    private fun checkPermission(vararg perm:String) : Boolean {
         val havePermissions = perm.toList().all {
