@@ -10,6 +10,7 @@ import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.esaitbiriyanicenter.ShopClosedActivity
+import com.restaurant.esaitbiriyanicenter.constants.Constants
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -52,6 +53,7 @@ class SplashActivity : AppCompatActivity() {
                 list.add(item)
             }
             if(list.get(0).get("availability").equals("1")) {
+                Constants.availabilityList = list;
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()

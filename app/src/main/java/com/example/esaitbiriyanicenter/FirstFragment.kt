@@ -101,9 +101,6 @@ class FirstFragment : Fragment() {
                     )
                     val fin = Distance*1.60934
                     distance = fin * 1.6;
-                    if(distance>15) {
-                       //Navigate to sorry fragment
-                    }
                     deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
                     var deliveryChargesText = textView2.text.toString();
                     deliveryChargesText = String.format(deliveryChargesText,deliveryCharges);
@@ -233,8 +230,7 @@ class FirstFragment : Fragment() {
             }
 
             if (grandTotal > 0) {
-
-                if((grandTotal > 500 && grandTotal <1000) && distance <10){
+                if((grandTotal > 500) && distance <10){
                     deliveryCharges = 0;
                 }
                 if (specialPackingCharges > 0) {
@@ -247,8 +243,6 @@ class FirstFragment : Fragment() {
                     discountedPrice = grandTotal/10;
                     grandTotal = grandTotal - grandTotal/10;
                 }
-
-
 
                 var grandTotalStr =
                     "Grand Total " + "                                               ₹" + grandTotal;
@@ -323,8 +317,10 @@ class FirstFragment : Fragment() {
             return 100;
         } else if(distance>10 && distance<15){
             return 150;
-        } else {
-            return 0;
+        } else if(distance > 15) {
+            return 150;
+        } else{
+            return 30;
         }
     }
 

@@ -16,6 +16,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.restaurant.esaitbiriyanicenter.R
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
+import com.restaurant.esaitbiriyanicenter.constants.Constants
 import kotlinx.android.synthetic.main.section_child.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -47,6 +48,24 @@ class AdapterSectionRecycler(context: Context, sectionItemList: MutableList<Sect
     }
 
     override fun onBindChildViewHolder(p0: ChildViewHolder?, p1: Int, p2: Int, p3: Child?) {
+        if(p1==1 && p2==0){
+            var availability = Constants.availabilityList.get(p2+5).get("availability");
+            if(availability.equals("0")){
+                p0?.itemView?.findViewById<TextView>(R.id.availability_txt)?.visibility = View.VISIBLE;
+                p0?.itemView?.findViewById<TextView>(R.id.plus)?.isEnabled = false;
+                p0?.itemView?.findViewById<TextView>(R.id.plus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+                p0?.itemView?.findViewById<TextView>(R.id.minus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+            }
+        }
+        if(p2>=0) {
+            var availability = Constants.availabilityList.get(p2+1).get("availability");
+            if(availability.equals("0")){
+                p0?.itemView?.findViewById<TextView>(R.id.availability_txt)?.visibility = View.VISIBLE;
+                p0?.itemView?.findViewById<TextView>(R.id.plus)?.isEnabled = false;
+                p0?.itemView?.findViewById<TextView>(R.id.plus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+                p0?.itemView?.findViewById<TextView>(R.id.minus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+            }
+        }
         p0?.name?.setText(p3?.name);
         val name = p3?.name;
             var qtyValue = Integer.parseInt(p0?.itemView?.findViewById<TextView>(R.id.quantity)?.text.toString());

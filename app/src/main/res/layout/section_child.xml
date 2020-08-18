@@ -60,4 +60,17 @@
         android:paddingLeft="17dp"
         />
 
+    <TextView
+        android:id="@+id/availability_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="#ff0000"
+        android:text="Not available"
+        app:layout_constraintTop_toBottomOf="@+id/minus"
+        app:layout_constraintStart_toStartOf="@+id/minus"
+        app:layout_constraintEnd_toEndOf="@id/plus"
+        tools:ignore="MissingConstraints"
+        android:visibility="gone"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
