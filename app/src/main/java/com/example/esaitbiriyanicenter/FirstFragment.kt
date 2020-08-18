@@ -2,9 +2,12 @@ package com.restaurant.esaitbiriyanicenter
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context.LOCATION_SERVICE
 import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -18,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.DefaultRetryPolicy
@@ -33,10 +37,10 @@ import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.section_child.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.Math.cos
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.math.cos
 
 
 /**
@@ -93,7 +97,7 @@ class FirstFragment : Fragment() {
                     val Distance = 3963.0 * StrictMath.acos(
                         (StrictMath.sin(lat1) * StrictMath.sin(
                             lat2
-                        )) + cos(lat1) * cos(lat2) * cos(long2 - long1)
+                        )) +cos(lat1) * cos(lat2) * cos(long2 - long1)
                     )
                     val fin = Distance*1.60934
                     distance = fin * 1.6;
@@ -110,6 +114,8 @@ class FirstFragment : Fragment() {
                     }
                 }
             })
+        } else {
+
         }
         /*** Distance calculation ****/
 
@@ -265,8 +271,54 @@ class FirstFragment : Fragment() {
 
     }
 
+ /*   fun getLocation() {
+        var locationManager = context?.getSystemService(LOCATION_SERVICE) as LocationManager?
+
+        var locationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location?) {
+                var latitute = location!!.latitude
+                var longitute = location!!.longitude
+                Log.i("test", "Latitute: $latitute ; Longitute: $longitute")
+
+            }
+
+            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+            }
+
+            override fun onProviderEnabled(provider: String?) {
+            }
+
+            override fun onProviderDisabled(provider: String?) {
+            }
+        }
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSION_REQUEST_ACCESS_FINE_LOCATION)
+            return
+        }
+        locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_ACCESS_FINE_LOCATION) {
+            when (grantResults[0]) {
+                PackageManager.PERMISSION_GRANTED -> getLocation()
+                //PackageManager.PERMISSION_DENIED -> //Tell to user the need of grant permission
+            }
+        }
+    }
+
+    companion object {
+        private const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 100
+    }*/
+
     /*************** USER LOCATION TRACKING *********************************/
-    private fun checkPermission(vararg perm:String) : Boolean {
+   private fun checkPermission(vararg perm:String) : Boolean {
         val havePermissions = perm.toList().all {
             ContextCompat.checkSelfPermission(requireContext(),it) ==
                     PackageManager.PERMISSION_GRANTED
@@ -380,7 +432,6 @@ class FirstFragment : Fragment() {
         val adapter = ImageSliderAdapter(requireContext())
         viewpager?.adapter = adapter
         /*After setting the adapter use the timer */
-
         /*After setting the adapter use the timer */
         val handler = Handler()
         val Update = Runnable {
@@ -415,6 +466,7 @@ class FirstFragment : Fragment() {
             builder.setView(view)
             builder.setMessage(R.string.offer);
             builder.setPositiveButton("Ok") { dialogInterface, which ->
+                getFragmentManager()?.beginTransaction()?.detach(this)?.attach(this)?.commit();
                 dialogInterface.dismiss();
             }
             builder.show()
