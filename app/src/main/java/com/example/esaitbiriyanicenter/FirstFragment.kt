@@ -464,7 +464,7 @@ class FirstFragment : Fragment() {
             val factory = LayoutInflater.from(context)
             val view: View = factory.inflate(R.layout.offer_popup_menu, null)
             builder.setView(view)
-            builder.setMessage(R.string.offer);
+            builder.setMessage("");
             builder.setPositiveButton("Ok") { dialogInterface, which ->
                 getFragmentManager()?.beginTransaction()?.detach(this)?.attach(this)?.commit();
                 dialogInterface.dismiss();

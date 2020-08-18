@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/offer_imageview"
-        android:layout_width="323dp"
-        android:layout_height="344dp"
+        android:layout_width="279dp"
+        android:layout_height="394dp"
         android:layout_marginLeft="30dp"
         android:src="@drawable/offer" />
 </LinearLayout>

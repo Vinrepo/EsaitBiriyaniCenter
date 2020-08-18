@@ -7,13 +7,15 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        tools:srcCompat="@drawable/biriyani_1"
         android:id="@+id/imageView_slide"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="413dp"
+        android:layout_height="208dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:scaleType="fitXY"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:srcCompat="@drawable/biriyani_1" />
 </androidx.constraintlayout.widget.ConstraintLayout>
