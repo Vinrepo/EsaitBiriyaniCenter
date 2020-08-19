@@ -2,6 +2,7 @@ package com.restaurant.esaitbiriyanicenter
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +14,8 @@ import com.android.volley.Response
 import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.esaitbiriyanicenter.DatabaseHandler
+import com.example.esaitbiriyanicenter.EmpModelClass
 import com.example.esaitbiriyanicenter.ShopClosedActivity
 import com.restaurant.esaitbiriyanicenter.constants.EsaitConstants
 import com.sucho.placepicker.AddressData
@@ -63,25 +66,45 @@ class SplashActivity : AppCompatActivity() {
                 item["availability"] = brand
                 list.add(item)
             }
+            val databaseHandler: DatabaseHandler = DatabaseHandler(this)
+            //calling the viewEmployee method of DatabaseHandler class to read the records
+            val emp: List<EmpModelClass> = databaseHandler.viewEmployee()
+            val empArraylat = Array<String>(emp.size){"null"}
+            val empArraylong = Array<String>(emp.size){"null"}
+            var index = 0
+            var lat = 0.0
+            var long = 0.0
+            for(e in emp){
+                empArraylat[index] = e.userlat
+                empArraylong[index] = e.userlong
+            }
             if(list.get(0).get("availability").equals("1")) {
                 EsaitConstants.availabilityList = list;
+                if(emp.isNotEmpty()){
+                    lat = empArraylat[0].toDouble()
+                    long = empArraylong[0].toDouble()
+                }
+                else{
+                    lat = 12.9231058
+                    long = 80.1266854
+                }
 
                 val builder = AlertDialog.Builder(this);
                 builder.setMessage("We would like to know your location to serve you better, please select your location from the Map.");
                 //performing positive action
                 builder.setPositiveButton("Proceed"){dialogInterface, which ->
                     val intent = PlacePicker.IntentBuilder()
-                        .setLatLong(12.9231058, 80.1266854)  // Initial Latitude and Longitude the Map will load into
+                        .setLatLong(lat, long)  // Initial Latitude and Longitude the Map will load into
                         .showLatLong(false)  // Show Coordinates in the Activity
                         .setMapZoom(12.0f)  // Map Zoom Level. Default: 14.0
                         .setAddressRequired(true) // Set If return only Coordinates if cannot fetch Address for the coordinates. Default: True
                         .hideMarkerShadow(true) // Hides the shadow under the map marker. Default: False
-                        .setMarkerDrawable(R.drawable.halal) // Change the default Marker Image
-                        .setMarkerImageImageColor(R.color.colorPrimary)
-                        .setFabColor(R.color.colorAccent)
-                        .setPrimaryTextColor(R.color.colorPrimaryDark) // Change text color of Shortened Address
-                        .setSecondaryTextColor(R.color.colorPrimary) // Change text color of full Address
-                        .setBottomViewColor(R.color.colorAccent) // Change Address View Background Color (Default: White)
+                        .setMarkerDrawable(R.drawable.locationpin) // Change the default Marker Image
+                        .setMarkerImageImageColor(R.color.dark)
+                        .setFabColor(R.color.dark)
+                        .setPrimaryTextColor(R.color.black) // Change text color of Shortened Address
+                        .setSecondaryTextColor(R.color.light) // Change text color of full Address
+                        .setBottomViewColor(R.color.white) // Change Address View Background Color (Default: White)
                         .setMapRawResourceStyle(R.raw.map_style)  //Set Map Style (https://mapstyle.withgoogle.com/)
                         .setMapType(MapType.NORMAL)
                         .setPlaceSearchBar(true, GOOGLE_API_KEY) //Activate GooglePlace Search Bar. Default is false/not activated. SearchBar is a chargeable feature by Google
@@ -116,6 +139,7 @@ class SplashActivity : AppCompatActivity() {
                 if (addressData != null) {
                     EsaitConstants.latitude = addressData.latitude
                     EsaitConstants.longitude = addressData.longitude
+                    EsaitConstants.address = addressData.addressList.toString()
                 }
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)

@@ -17,6 +17,8 @@ class DatabaseHandler(context: Context?): SQLiteOpenHelper(context,DATABASE_NAME
         private val KEY_NAME = "name"
         private val KEY_EMAIL = "email"
         private val KEY_PHONE = "phone"
+        private val KEY_LAT = "lat"
+        private val KEY_LONG = "long"
 
     }
     override fun onCreate(db: SQLiteDatabase?) {
@@ -24,7 +26,7 @@ class DatabaseHandler(context: Context?): SQLiteOpenHelper(context,DATABASE_NAME
         //creating table with fields
         val CREATE_CONTACTS_TABLE = ("CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-                + KEY_EMAIL + " TEXT,"+ KEY_PHONE + " TEXT" + ")")
+                + KEY_EMAIL + " TEXT,"+ KEY_PHONE + " TEXT,"+KEY_LONG + " TEXT," + KEY_LAT + " TEXT" +")")
         db?.execSQL(CREATE_CONTACTS_TABLE)
     }
 
@@ -42,7 +44,9 @@ class DatabaseHandler(context: Context?): SQLiteOpenHelper(context,DATABASE_NAME
         contentValues.put(KEY_ID, emp.userId)
         contentValues.put(KEY_NAME, emp.userName) // EmpModelClass Name
         contentValues.put(KEY_EMAIL,emp.userEmail )
-        contentValues.put(KEY_PHONE,emp.userphone )// EmpModelClass Phone
+        contentValues.put(KEY_PHONE,emp.userphone )
+        contentValues.put(KEY_LAT,emp.userlat )
+        contentValues.put(KEY_LONG,emp.userlong )// EmpModelClass Phone
         // Inserting Row
         val success = db.insert(TABLE_CONTACTS, null, contentValues)
         //2nd argument is String containing nullColumnHack
@@ -65,13 +69,17 @@ class DatabaseHandler(context: Context?): SQLiteOpenHelper(context,DATABASE_NAME
         var userName: String
         var userEmail: String
         var userphone: String
+        var userlat: String
+        var userlong: String
         if (cursor.moveToFirst()) {
             do {
                 userId = cursor.getInt(cursor.getColumnIndex("id"))
                 userName = cursor.getString(cursor.getColumnIndex("name"))
                 userEmail = cursor.getString(cursor.getColumnIndex("email"))
                 userphone = cursor.getString(cursor.getColumnIndex("phone"))
-                val emp= EmpModelClass(userId = userId, userName = userName, userEmail = userEmail, userphone = userphone)
+                userlat = cursor.getString(cursor.getColumnIndex("lat"))
+                userlong = cursor.getString(cursor.getColumnIndex("long"))
+                val emp= EmpModelClass(userId = userId, userName = userName, userEmail = userEmail, userphone = userphone,userlat = userlat,userlong = userlong)
                 empList.add(emp)
             } while (cursor.moveToNext())
         }
@@ -84,7 +92,9 @@ class DatabaseHandler(context: Context?): SQLiteOpenHelper(context,DATABASE_NAME
         contentValues.put(KEY_ID, emp.userId)
         contentValues.put(KEY_NAME, emp.userName) // EmpModelClass Name
         contentValues.put(KEY_EMAIL,emp.userEmail )
-        contentValues.put(KEY_PHONE,emp.userphone )// EmpModelClass Email
+        contentValues.put(KEY_PHONE,emp.userphone )
+        contentValues.put(KEY_LAT,emp.userlat )
+        contentValues.put(KEY_LONG,emp.userlong )// EmpModelClass Email
 
         // Updating Row
         val success = db.update(TABLE_CONTACTS, contentValues,"id="+emp.userId,null)

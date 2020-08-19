@@ -42,6 +42,11 @@ import java.lang.Math.cos
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import javax.mail.*
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
+
+
 
 
 /**
@@ -70,8 +75,24 @@ class FirstFragment : Fragment() {
         //getItems()
         //imageslider fun call
         imageSliderImplementation();
+        //toolbar.setLogo(R.drawable.plus);
+        //Transport.send(plainMail())
+
+
 
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
+        //toolbar.setLogo(R.drawable.plus);
+        toolbar.setOverflowIcon(ContextCompat.getDrawable(requireContext(),R.drawable.call));
+        //(activity as AppCompatActivity?)!!.getSupportActionBar()?.setHomeButtonEnabled(true);
+        //(activity as AppCompatActivity?)!!.getSupportActionBar()?.setDisplayShowHomeEnabled(true);
+        //(activity as AppCompatActivity?)!!.getSupportActionBar()?.setDisplayUseLogoEnabled(true);
+        //(activity as AppCompatActivity?)!!.getSupportActionBar()?.setLogo(R.drawable.plus);
+        //(activity as AppCompatActivity?)!!.getSupportActionBar()?.setDisplayShowTitleEnabled(false);
+
+
+
+
+
         /*** Distance calculation ****/
 
 
@@ -108,6 +129,8 @@ class FirstFragment : Fragment() {
                 // Got last known location. In some rare
                 // situations this can be null.
                 if(location == null) {
+                    Toast.makeText(context,"please turn on loaction",Toast.LENGTH_SHORT).show()
+
                     // TODO, handle it
                 } else location.apply {
                     // Handle location object
@@ -426,5 +449,6 @@ class FirstFragment : Fragment() {
             builder.show()
         }
     }
+  
 }
 

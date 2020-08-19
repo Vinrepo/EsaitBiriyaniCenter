@@ -17,12 +17,15 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         tools:ignore="MissingConstraints">
 
+
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorAccent"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -31,13 +34,10 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="198dp"
-        tools:ignore="MissingConstraints"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
         app:layout_constraintTop_toBottomOf="@+id/header_service_disp"
-        >
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="10dp">
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
@@ -56,6 +56,23 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/textView0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:paddingLeft="3dp"
+        android:paddingTop="2sp"
+        android:text="@string/refresh"
+        android:textColor="#34A30B"
+        android:textSize="16sp"
+
+        app:layout_constraintBottom_toTopOf="@+id/recycler_view"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        tools:ignore="MissingConstraints" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -63,9 +80,9 @@
         android:layout_height="320dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
