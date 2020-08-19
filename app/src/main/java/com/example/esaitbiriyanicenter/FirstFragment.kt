@@ -33,6 +33,7 @@ import com.android.volley.toolbox.Volley
 import com.example.esaitbiriyanicenter.ImageSliderAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.restaurant.esaitbiriyanicenter.constants.EsaitConstants
 import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.section_child.*
 import org.json.JSONException
@@ -76,7 +77,31 @@ class FirstFragment : Fragment() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         var distance = 0.0;
-        if (checkPermission(
+        var currentLocationLat = EsaitConstants.latitude;
+        var currentLocationLong = EsaitConstants.longitude;
+        val long1 = 80.1266854 / 57.29577951
+        val lat1 = 12.9231058 / 57.29577951
+        val long2 = currentLocationLong / 57.29577951
+        val lat2 = currentLocationLat / 57.29577951
+
+        val Distance = 3963.0 * StrictMath.acos(
+            (StrictMath.sin(lat1) * StrictMath.sin(
+                lat2
+            )) +cos(lat1) * cos(lat2) * cos(long2 - long1)
+        )
+        val fin = Distance*1.60934
+        distance = fin * 1.6;
+        deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
+        var deliveryChargesText = textView2.text.toString();
+        deliveryChargesText = String.format(deliveryChargesText,deliveryCharges);
+        //deliveryChargesText = "Delivery charges "+deliveryCharges
+        textView2.setText(deliveryChargesText);
+        if(deliveryCharges >=50){
+            distancefee.visibility = View.VISIBLE;
+        }
+
+
+        /*if (checkPermission(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION)) {
             fusedLocationClient?.lastLocation?.addOnSuccessListener(requireActivity(),{location : Location? ->
@@ -87,33 +112,12 @@ class FirstFragment : Fragment() {
                 } else location.apply {
                     // Handle location object
                     Log.e("LOG", location.toString())
-                    var currentLocationLat = location.latitude;
-                    var currentLocationLong = location.longitude;
-                    val long1 = 80.1266854 / 57.29577951
-                    val lat1 = 12.9231058 / 57.29577951
-                    val long2 = currentLocationLong / 57.29577951
-                    val lat2 = currentLocationLat / 57.29577951
 
-                    val Distance = 3963.0 * StrictMath.acos(
-                        (StrictMath.sin(lat1) * StrictMath.sin(
-                            lat2
-                        )) +cos(lat1) * cos(lat2) * cos(long2 - long1)
-                    )
-                    val fin = Distance*1.60934
-                    distance = fin * 1.6;
-                    deliveryCharges = getDeliveryChargesBasedOnDistance(distance);
-                    var deliveryChargesText = textView2.text.toString();
-                    deliveryChargesText = String.format(deliveryChargesText,deliveryCharges);
-                    //deliveryChargesText = "Delivery charges "+deliveryCharges
-                    textView2.setText(deliveryChargesText);
-                    if(deliveryCharges >=50){
-                        distancefee.visibility = View.VISIBLE;
-                    }
                 }
             })
         } else {
 
-        }
+        }*/
         /*** Distance calculation ****/
 
 
