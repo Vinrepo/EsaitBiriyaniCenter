@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -155,9 +156,7 @@ class SecondFragment : Fragment() {
         if(id.trim()!="" && name.trim()!="" && email.trim()!=""&& lat.trim()!=""&& long.trim()!=""){
             val status = databaseHandler.addEmployee(EmpModelClass(Integer.parseInt(id),name,email,phone,lat,long))
             if(status > -1){
-                var applicationContext = null
-                Toast.makeText(context,"record save",Toast.LENGTH_LONG).show()
-
+                Log.v("SecondFragment","Record Saved for Lat Long");
             }
         }
 
