@@ -41,7 +41,7 @@ class SecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState);
         super.onCreate(savedInstanceState)
 
-        editTextTextEmailName.setText(EsaitConstants.address);
+
         var c = 0
 
         //fun viewRecord(context: Context?){
@@ -70,7 +70,7 @@ class SecondFragment : Fragment() {
             if(empArrayId[0] == "100") {
                 editTextPhone.setText(empArrayphone[0]);
                 editTextAddress.setText(empArrayName[0]);
-                //editTextTextEmailName.setText(empArrayEmail[0]);
+                editTextTextEmailName.setText(empArrayEmail[0]);
                 c = 1
             }
 
@@ -114,8 +114,7 @@ class SecondFragment : Fragment() {
                     finalWhatsAppMessage+= grandTotal + "\n\n";
                     finalWhatsAppMessage+= "For Mr/Mrs : "+editTextTextEmailName.text + "\n";
                     finalWhatsAppMessage+= "Staying @ "+editTextAddress.text + "\n";
-                    finalWhatsAppMessage+= "Map Link "+"https://www.google.com/maps/search/?api=1&query="+EsaitConstants.latitude+","+EsaitConstants.longitude+""+"\n";
-                    //https://www.google.com/maps/search/?api=1&query=<lat>,<lng>
+                    finalWhatsAppMessage+= "Map Link : https://maps.google.com/?q="+EsaitConstants.latitude+","+EsaitConstants.longitude+"\n";
                     finalWhatsAppMessage+= "Phone : "+editTextPhone.text + "\n";
                     if(!editTextComments.text.equals("")){
                         finalWhatsAppMessage+= "Comments : "+editTextComments.text + "\n";

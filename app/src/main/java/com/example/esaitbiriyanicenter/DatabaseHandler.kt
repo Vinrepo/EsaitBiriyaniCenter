@@ -47,7 +47,7 @@ class DatabaseHandler(context: Context?): SQLiteOpenHelper(context,DATABASE_NAME
         contentValues.put(KEY_PHONE,emp.userphone )
         contentValues.put(KEY_LAT,emp.userlat )
         contentValues.put(KEY_LONG,emp.userlong )// EmpModelClass Phone
-        // Inserting Row
+        // Inserting Rowx
         val success = db.insert(TABLE_CONTACTS, null, contentValues)
         //2nd argument is String containing nullColumnHack
         db.close() // Closing database connection
