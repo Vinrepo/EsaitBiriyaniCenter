@@ -21,11 +21,8 @@ import com.example.esaitbiriyanicenter.EmpModelClass
 import com.example.esaitbiriyanicenter.LatlongClass
 import com.example.esaitbiriyanicenter.ShopClosedActivity
 import com.restaurant.esaitbiriyanicenter.constants.EsaitConstants
-import com.sucho.placepicker.AddressData
-import com.sucho.placepicker.Constants
+import com.sucho.placepicker.*
 import com.sucho.placepicker.Constants.GOOGLE_API_KEY
-import com.sucho.placepicker.MapType
-import com.sucho.placepicker.PlacePicker
 import kotlinx.android.synthetic.main.fragment_second.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -184,7 +181,7 @@ class SplashActivity : AppCompatActivity() {
         val intent = PlacePicker.IntentBuilder()
             .setLatLong(lat, long)  // Initial Latitude and Longitude the Map will load into
             .showLatLong(false)  // Show Coordinates in the Activity
-            .setMapZoom(12.0f)  // Map Zoom Level. Default: 14.0
+            .setMapZoom(20.0f)  // Map Zoom Level. Default: 14.0
             .setAddressRequired(true) // Set If return only Coordinates if cannot fetch Address for the coordinates. Default: True
             .hideMarkerShadow(true) // Hides the shadow under the map marker. Default: False
             .setMarkerDrawable(R.drawable.map) // Change the default Marker Image

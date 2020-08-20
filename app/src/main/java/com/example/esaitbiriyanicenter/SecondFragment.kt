@@ -100,8 +100,6 @@ class SecondFragment : Fragment() {
                 else{
                     updateRecord(context)
                 }
-
-
             }
             if(editTextTextEmailName.text.toString().equals("") || editTextAddress.text.toString().equals("") || editTextPhone.text.toString().equals("")) {
                 Toast.makeText(context,"All fields are mandatory",Toast.LENGTH_SHORT).show();
@@ -115,7 +113,7 @@ class SecondFragment : Fragment() {
                     finalWhatsAppMessage+= grandTotal + "\n\n";
                     finalWhatsAppMessage+= "For Mr/Mrs : "+editTextTextEmailName.text + "\n";
                     finalWhatsAppMessage+= "Staying @ "+editTextAddress.text + "\n";
-                    finalWhatsAppMessage+= "Map Link : https://maps.google.com/?q="+EsaitConstants.latitude+","+EsaitConstants.longitude+"\n";
+                    finalWhatsAppMessage+= "Delivery Location : https://maps.google.com/?q="+EsaitConstants.latitude+","+EsaitConstants.longitude+"\n";
                     finalWhatsAppMessage+= "Phone : "+editTextPhone.text + "\n";
                     if(!editTextComments.text.equals("")){
                         finalWhatsAppMessage+= "Comments : "+editTextComments.text + "\n";
