@@ -86,44 +86,25 @@ class SplashActivity : AppCompatActivity() {
                 if(emp.isNotEmpty()){
                     lat = empArraylat[0].toDouble()
                     long = empArraylong[0].toDouble()
+                    placePickerCall(lat,long);
                 }
                 else{
-
                     lat = 12.9231058
                     long = 80.1266854
+                    val builder = AlertDialog.Builder(this);
+                    builder.setMessage("We would like to know your location to serve you better, please select your location from the Map.");
+                    //performing positive action
+                    builder.setPositiveButton("Proceed"){dialogInterface, which ->
+                        placePickerCall(lat,long);
+                    }
+                    // Create the AlertDialog
+                    val alertDialog: AlertDialog = builder.create()
+                    // Set other dialog properties
+                    alertDialog.setCancelable(false)
+                    alertDialog.show()
                 }
 
-                val builder = AlertDialog.Builder(this);
-                builder.setMessage("We would like to know your location to serve you better, please select your location from the Map.");
-                //performing positive action
-                builder.setPositiveButton("Proceed"){dialogInterface, which ->
-                    val intent = PlacePicker.IntentBuilder()
-                        .setLatLong(lat, long)  // Initial Latitude and Longitude the Map will load into
-                        .showLatLong(false)  // Show Coordinates in the Activity
-                        .setMapZoom(12.0f)  // Map Zoom Level. Default: 14.0
-                        .setAddressRequired(true) // Set If return only Coordinates if cannot fetch Address for the coordinates. Default: True
-                        .hideMarkerShadow(true) // Hides the shadow under the map marker. Default: False
-                        .setMarkerDrawable(R.drawable.locationpin) // Change the default Marker Image
-                        //.setMarkerImageImageColor(R.color.dark)
-                        .setFabColor(R.color.dark)
-                        .setPrimaryTextColor(R.color.black) // Change text color of Shortened Address
-                        .setSecondaryTextColor(R.color.light) // Change text color of full Address
-                        .setBottomViewColor(R.color.white) // Change Address View Background Color (Default: White)
-                        .setMapRawResourceStyle(R.raw.map_style)  //Set Map Style (https://mapstyle.withgoogle.com/)
-                        .setMapType(MapType.NORMAL)
-                        .setPlaceSearchBar(false, GOOGLE_API_KEY) //Activate GooglePlace Search Bar. Default is false/not activated. SearchBar is a chargeable feature by Google
-                        .onlyCoordinates(false)  //Get only Coordinates from Place Picker
-                        .hideLocationButton(true)   //Hide Location Button (Default: false)
-                        .disableMarkerAnimation(false)   //Disable Marker Animation (Default: false)
-                        .build(this)
-                    startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST)
 
-                }
-                // Create the AlertDialog
-                val alertDialog: AlertDialog = builder.create()
-                // Set other dialog properties
-                alertDialog.setCancelable(false)
-                alertDialog.show()
 
             } else if(list.get(0).get("availability").equals("0")){
                 val intent = Intent(this, ShopClosedActivity::class.java)
@@ -147,7 +128,7 @@ class SplashActivity : AppCompatActivity() {
                     //calling the viewEmployee method of DatabaseHandler class to read the records
                     EsaitConstants.latitude = addressData.latitude
                     EsaitConstants.longitude = addressData.longitude
-                    EsaitConstants.address = addressData?.addressList[0]?.toString()
+                    EsaitConstants.address = addressData?.addressList?.get(0)?.getAddressLine(0).toString()
                     val emp: List<LatlongClass> = databaseHandler.viewLatlong()
                     val empArraylat = Array<String>(emp.size){"null"}
                     val empArraylong = Array<String>(emp.size){"null"}
@@ -183,8 +164,6 @@ class SplashActivity : AppCompatActivity() {
         if(lat.trim()!=""&& long.trim()!=""){
             val status = databaseHandler.addLatlong(LatlongClass(lat,long))
             if(status > -1){
-                var applicationContext = null
-                Toast.makeText(context,"record save",Toast.LENGTH_LONG).show()
 
             }
         }
@@ -199,8 +178,29 @@ class SplashActivity : AppCompatActivity() {
             //calling the updateEmployee method of DatabaseHandler class to update record
             val status = databaseHandler.updatelatlong(LatlongClass(lat,long))
         }
+    }
 
-
+    fun placePickerCall(lat : Double, long : Double) {
+        val intent = PlacePicker.IntentBuilder()
+            .setLatLong(lat, long)  // Initial Latitude and Longitude the Map will load into
+            .showLatLong(false)  // Show Coordinates in the Activity
+            .setMapZoom(12.0f)  // Map Zoom Level. Default: 14.0
+            .setAddressRequired(true) // Set If return only Coordinates if cannot fetch Address for the coordinates. Default: True
+            .hideMarkerShadow(true) // Hides the shadow under the map marker. Default: False
+            .setMarkerDrawable(R.drawable.map) // Change the default Marker Image
+            //.setMarkerImageImageColor(R.color.dark)
+            .setFabColor(R.color.dark)
+            .setPrimaryTextColor(R.color.black) // Change text color of Shortened Address
+            .setSecondaryTextColor(R.color.light) // Change text color of full Address
+            .setBottomViewColor(R.color.white) // Change Address View Background Color (Default: White)
+            .setMapRawResourceStyle(R.raw.map_style)  //Set Map Style (https://mapstyle.withgoogle.com/)
+            .setMapType(MapType.NORMAL)
+            .setPlaceSearchBar(false, GOOGLE_API_KEY) //Activate GooglePlace Search Bar. Default is false/not activated. SearchBar is a chargeable feature by Google
+            .onlyCoordinates(false)  //Get only Coordinates from Place Picker
+            .hideLocationButton(true)   //Hide Location Button (Default: false)
+            .disableMarkerAnimation(false)   //Disable Marker Animation (Default: false)
+            .build(this)
+        startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST)
     }
 
 }
