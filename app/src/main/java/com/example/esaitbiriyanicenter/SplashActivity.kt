@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.android.volley.DefaultRetryPolicy
@@ -16,6 +18,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.esaitbiriyanicenter.DatabaseHandler
 import com.example.esaitbiriyanicenter.EmpModelClass
+import com.example.esaitbiriyanicenter.LatlongClass
 import com.example.esaitbiriyanicenter.ShopClosedActivity
 import com.restaurant.esaitbiriyanicenter.constants.EsaitConstants
 import com.sucho.placepicker.AddressData
@@ -68,7 +71,7 @@ class SplashActivity : AppCompatActivity() {
             }
             val databaseHandler: DatabaseHandler = DatabaseHandler(this)
             //calling the viewEmployee method of DatabaseHandler class to read the records
-            val emp: List<EmpModelClass> = databaseHandler.viewEmployee()
+            val emp: List<LatlongClass> = databaseHandler.viewLatlong()
             val empArraylat = Array<String>(emp.size){"null"}
             val empArraylong = Array<String>(emp.size){"null"}
             var index = 0
@@ -85,6 +88,7 @@ class SplashActivity : AppCompatActivity() {
                     long = empArraylong[0].toDouble()
                 }
                 else{
+
                     lat = 12.9231058
                     long = 80.1266854
                 }
@@ -100,17 +104,17 @@ class SplashActivity : AppCompatActivity() {
                         .setAddressRequired(true) // Set If return only Coordinates if cannot fetch Address for the coordinates. Default: True
                         .hideMarkerShadow(true) // Hides the shadow under the map marker. Default: False
                         .setMarkerDrawable(R.drawable.locationpin) // Change the default Marker Image
-                        .setMarkerImageImageColor(R.color.dark)
+                        //.setMarkerImageImageColor(R.color.dark)
                         .setFabColor(R.color.dark)
                         .setPrimaryTextColor(R.color.black) // Change text color of Shortened Address
                         .setSecondaryTextColor(R.color.light) // Change text color of full Address
                         .setBottomViewColor(R.color.white) // Change Address View Background Color (Default: White)
                         .setMapRawResourceStyle(R.raw.map_style)  //Set Map Style (https://mapstyle.withgoogle.com/)
                         .setMapType(MapType.NORMAL)
-                        .setPlaceSearchBar(true, GOOGLE_API_KEY) //Activate GooglePlace Search Bar. Default is false/not activated. SearchBar is a chargeable feature by Google
-                        .onlyCoordinates(true)  //Get only Coordinates from Place Picker
+                        .setPlaceSearchBar(false, GOOGLE_API_KEY) //Activate GooglePlace Search Bar. Default is false/not activated. SearchBar is a chargeable feature by Google
+                        .onlyCoordinates(false)  //Get only Coordinates from Place Picker
                         .hideLocationButton(true)   //Hide Location Button (Default: false)
-                        .disableMarkerAnimation(true)   //Disable Marker Animation (Default: false)
+                        .disableMarkerAnimation(false)   //Disable Marker Animation (Default: false)
                         .build(this)
                     startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST)
 
@@ -137,9 +141,31 @@ class SplashActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 val addressData = data?.getParcelableExtra<AddressData>(Constants.ADDRESS_INTENT)
                 if (addressData != null) {
+                    /*****latitude and longitude database handler*****/
+                    val databaseHandler: DatabaseHandler= DatabaseHandler(this)
+
+                    //calling the viewEmployee method of DatabaseHandler class to read the records
                     EsaitConstants.latitude = addressData.latitude
                     EsaitConstants.longitude = addressData.longitude
-                    EsaitConstants.address = addressData.addressList.toString()
+                    EsaitConstants.address = addressData?.addressList[0]?.toString()
+                    val emp: List<LatlongClass> = databaseHandler.viewLatlong()
+                    val empArraylat = Array<String>(emp.size){"null"}
+                    val empArraylong = Array<String>(emp.size){"null"}
+
+                    var index = 0
+                    for(e in emp){
+                        empArraylat[index] = e.userlat
+                        empArraylong[index] = e.userlong
+                    }
+                    if (emp.isNotEmpty()){
+                        updateRecord(this)
+
+                    }
+                    else{
+
+                        saveRecord(this)
+                    }
+                    /*****latitude and longitude database handler*****/
                 }
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
@@ -149,6 +175,34 @@ class SplashActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
+    fun saveRecord(context: Context?){
+        val lat = EsaitConstants.latitude.toString()
+        val long = EsaitConstants.longitude.toString()
+        val databaseHandler: DatabaseHandler = DatabaseHandler( context )
+
+        if(lat.trim()!=""&& long.trim()!=""){
+            val status = databaseHandler.addLatlong(LatlongClass(lat,long))
+            if(status > -1){
+                var applicationContext = null
+                Toast.makeText(context,"record save",Toast.LENGTH_LONG).show()
+
+            }
+        }
+
+    }
+    fun updateRecord(context: Context?){
+        val lat = EsaitConstants.latitude.toString()
+        val long = EsaitConstants.longitude.toString()
+        //creating the instance of DatabaseHandler class
+        val databaseHandler: DatabaseHandler= DatabaseHandler(context)
+        if(lat.trim()!=""&& long.trim()!=""){
+            //calling the updateEmployee method of DatabaseHandler class to update record
+            val status = databaseHandler.updatelatlong(LatlongClass(lat,long))
+        }
+
+
+    }
+
 }
 
 
