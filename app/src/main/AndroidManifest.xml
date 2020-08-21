@@ -14,6 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCaxpy-4nFNkCUw1l70VoyVtk2PHyUGkQI"/>
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <activity
             android:name="com.example.esaitbiriyanicenter.ShopClosedActivity"
             android:theme="@style/AppTheme.NoActionBar" />

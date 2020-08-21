@@ -190,7 +190,7 @@ class SplashActivity : AppCompatActivity() {
             .setPrimaryTextColor(R.color.black) // Change text color of Shortened Address
             .setSecondaryTextColor(R.color.light) // Change text color of full Address
             .setBottomViewColor(R.color.white) // Change Address View Background Color (Default: White)
-            .setMapRawResourceStyle(R.raw.map_style)  //Set Map Style (https://mapstyle.withgoogle.com/)
+            //.setMapRawResourceStyle(R.raw.map_style)  //Set Map Style (https://mapstyle.withgoogle.com/)
             .setMapType(MapType.NORMAL)
             .setPlaceSearchBar(false, GOOGLE_API_KEY) //Activate GooglePlace Search Bar. Default is false/not activated. SearchBar is a chargeable feature by Google
             .onlyCoordinates(false)  //Get only Coordinates from Place Picker
