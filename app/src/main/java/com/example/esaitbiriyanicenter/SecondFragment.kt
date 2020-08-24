@@ -73,7 +73,7 @@ class SecondFragment : Fragment() {
             if(empArrayId[0] == "100") {
                 editTextPhone.setText(empArrayphone[0]);
                 //editTextAddress.setText(empArrayName[0]);
-                editTextTextEmailName.setText(empArrayEmail[0]);
+                //editTextTextEmailName.setText(empArrayEmail[0]);
                 c = 1
             }
 

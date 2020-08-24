@@ -1,15 +1,21 @@
 package com.restaurant.esaitbiriyanicenter
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
@@ -20,21 +26,42 @@ import com.example.esaitbiriyanicenter.DatabaseHandler
 import com.example.esaitbiriyanicenter.EmpModelClass
 import com.example.esaitbiriyanicenter.LatlongClass
 import com.example.esaitbiriyanicenter.ShopClosedActivity
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.restaurant.esaitbiriyanicenter.constants.EsaitConstants
 import com.sucho.placepicker.*
 import com.sucho.placepicker.Constants.GOOGLE_API_KEY
 import kotlinx.android.synthetic.main.fragment_second.*
 import org.json.JSONException
 import org.json.JSONObject
+import android.provider.Settings;
+import android.view.View
+import kotlinx.coroutines.delay
 import java.lang.Exception
+import kotlinx.coroutines.*
 
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
+        if (!checkGPSEnabled()) {
+            return
+        }
+
         getItems();
+
     }
+    var fusedLocationClient: FusedLocationProviderClient? = null
+    val PERMISSION_ID = 42
+    var deliveryCharges = 0;
+    private lateinit var context: Context
+    var intent1: Intent? = null
+    lateinit var textView: TextView
+    private lateinit var locationManager: LocationManager
+    var gpsStatus = true
+
+
 
     private fun getItems() {
         //loading = ProgressDialog.show(this, "Loading", "please wait", false, true)
@@ -78,16 +105,50 @@ class SplashActivity : AppCompatActivity() {
                 empArraylat[index] = e.userlat
                 empArraylong[index] = e.userlong
             }
+            /***current location cheking    ******/
+            var location = null
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            do {
+
+
+                if (checkPermission(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    fusedLocationClient?.lastLocation?.addOnSuccessListener(this,{location : Location? ->
+                        // Got last known location. In some rare
+                        // situations this can be null.
+                        if(location == null) {
+                            Toast.makeText(this,"please turn on loaction",Toast.LENGTH_SHORT).show()
+
+
+                            // TODO, handle it
+                        } else location.apply {
+                            // Handle location object
+                            Log.e("LOG", location.toString())
+                            lat = location.latitude
+                            long = location.longitude
+                            //EsaitConstants.address = location.latitude.to
+
+
+                        }
+                    })
+                }
+            } while (location != null);
+
+
+            /***current location cheking    ******/
             if(list.get(0).get("availability").equals("1")) {
                 EsaitConstants.availabilityList = list;
                 if(emp.isNotEmpty()){
-                    lat = empArraylat[0].toDouble()
-                    long = empArraylong[0].toDouble()
+                    //lat = empArraylat[0].toDouble()
+                    //long = empArraylong[0].toDouble()
                     placePickerCall(lat,long);
                 }
                 else{
-                    lat = 12.9231058
-                    long = 80.1266854
+                    //lat = 12.9231058
+                    //long = 80.1266854
+                    //lat = location.lat
+                    //long = 80.1266854
                     val builder = AlertDialog.Builder(this);
                     builder.setMessage("We would like to know your location to serve you better, please select your location from the Map.");
                     //performing positive action
@@ -114,7 +175,10 @@ class SplashActivity : AppCompatActivity() {
 
     }
 
+
+
     override fun onActivityResult(requestCode: Int,resultCode: Int,data: Intent?) {
+
         if (requestCode == Constants.PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val addressData = data?.getParcelableExtra<AddressData>(Constants.ADDRESS_INTENT)
@@ -125,7 +189,7 @@ class SplashActivity : AppCompatActivity() {
                     //calling the viewEmployee method of DatabaseHandler class to read the records
                     EsaitConstants.latitude = addressData.latitude
                     EsaitConstants.longitude = addressData.longitude
-                    EsaitConstants.address = addressData?.addressList?.get(0)?.getAddressLine(0).toString()
+                    //EsaitConstants.address = addressData?.addressList?.get(0)?.getAddressLine(0).toString()
                     val emp: List<LatlongClass> = databaseHandler.viewLatlong()
                     val empArraylat = Array<String>(emp.size){"null"}
                     val empArraylong = Array<String>(emp.size){"null"}
@@ -198,6 +262,82 @@ class SplashActivity : AppCompatActivity() {
             .disableMarkerAnimation(false)   //Disable Marker Animation (Default: false)
             .build(this)
         startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST)
+    }
+    private fun checkPermission(vararg perm:String) : Boolean {
+        val havePermissions = perm.toList().all {
+            ContextCompat.checkSelfPermission(this,it) ==
+                    PackageManager.PERMISSION_GRANTED
+        }
+        if (!havePermissions) {
+            if(perm.toList().any {
+                    ActivityCompat.
+                    shouldShowRequestPermissionRationale(this, it)}
+            ) {
+                val dialog = AlertDialog.Builder(this)
+                    .setTitle("Permission")
+                    .setMessage("Permission needed!")
+                    .setPositiveButton("OK", {id, v ->
+                        ActivityCompat.requestPermissions(
+                            this, perm, PERMISSION_ID)
+                    })
+                    .setNegativeButton("No", {id, v -> })
+                    .create()
+                dialog.show()
+            } else {
+                ActivityCompat.requestPermissions(this, perm, PERMISSION_ID)
+            }
+            return false
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_ID -> {
+
+                //Handle some logic here
+            }
+        }
+    }
+    private fun checkGpsStatus() {
+        locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        Toast.makeText(this,"please turn on loaction",Toast.LENGTH_SHORT).show()
+        if (gpsStatus) {
+
+
+        } else {
+
+            intent1 = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent1);
+
+        }
+    }
+    fun gpsStatus(view: View) {
+        intent1 = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(intent1);
+    }
+    private fun checkGPSEnabled(): Boolean {
+        if (!isLocationEnabled())
+            showAlert()
+        return isLocationEnabled()
+
+    }
+    private fun isLocationEnabled(): Boolean {
+        var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+    private fun showAlert() {
+        val dialog = AlertDialog.Builder(this)
+        dialog.setTitle("Enable Location")
+            .setMessage("Locations Settings is set to 'Off'.\nEnable Location to use this app")
+            .setPositiveButton("Location Settings") { paramDialogInterface, paramInt ->
+                val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(myIntent)
+            }
+            .setNegativeButton("Cancel") { paramDialogInterface, paramInt -> }
+        dialog.show()
     }
 
 }
