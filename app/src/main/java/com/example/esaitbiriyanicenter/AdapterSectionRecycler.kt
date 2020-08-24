@@ -37,24 +37,31 @@ class AdapterSectionRecycler(context: Context, sectionItemList: MutableList<Sect
     }
 
     override fun onBindChildViewHolder(p0: ChildViewHolder?, p1: Int, p2: Int, p3: Child?) {
-
-        if(p1==0 && p2>=0) {
-            var availability = EsaitConstants.availabilityList.get(p2+1).get("availability");
-            if(availability.equals("0")){
-                p0?.itemView?.findViewById<TextView>(R.id.availability_txt)?.visibility = View.VISIBLE;
-                p0?.itemView?.findViewById<TextView>(R.id.plus)?.isEnabled = false;
-                p0?.itemView?.findViewById<TextView>(R.id.plus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
-                p0?.itemView?.findViewById<TextView>(R.id.minus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+        if(EsaitConstants.availabilityList.size > 0) {
+            if (p1 == 0 && p2 >= 0) {
+                var availability = EsaitConstants.availabilityList.get(p2 + 1).get("availability");
+                if (availability.equals("0")) {
+                    p0?.itemView?.findViewById<TextView>(R.id.availability_txt)?.visibility =
+                        View.VISIBLE;
+                    p0?.itemView?.findViewById<TextView>(R.id.plus)?.isEnabled = false;
+                    p0?.itemView?.findViewById<TextView>(R.id.plus)
+                        ?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+                    p0?.itemView?.findViewById<TextView>(R.id.minus)
+                        ?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+                }
             }
-        }
 
-        if(p1==1 && p2==0){
-            var availability = EsaitConstants.availabilityList.get(p2+5).get("availability");
-            if(availability.equals("0")){
-                p0?.itemView?.findViewById<TextView>(R.id.availability_txt)?.visibility = View.VISIBLE;
-                p0?.itemView?.findViewById<TextView>(R.id.plus)?.isEnabled = false;
-                p0?.itemView?.findViewById<TextView>(R.id.plus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
-                p0?.itemView?.findViewById<TextView>(R.id.minus)?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+            if (p1 == 1 && p2 == 0) {
+                var availability = EsaitConstants.availabilityList.get(p2 + 5).get("availability");
+                if (availability.equals("0")) {
+                    p0?.itemView?.findViewById<TextView>(R.id.availability_txt)?.visibility =
+                        View.VISIBLE;
+                    p0?.itemView?.findViewById<TextView>(R.id.plus)?.isEnabled = false;
+                    p0?.itemView?.findViewById<TextView>(R.id.plus)
+                        ?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+                    p0?.itemView?.findViewById<TextView>(R.id.minus)
+                        ?.setBackgroundColor(context?.resources?.getColor(R.color.textdisabled)!!);
+                }
             }
         }
 
