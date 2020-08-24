@@ -62,6 +62,7 @@ class SplashActivity : AppCompatActivity() {
     var gpsStatus = true
     var lat = 0.0
     var long = 0.0
+    var f = 0
 
 
 
@@ -117,6 +118,7 @@ class SplashActivity : AppCompatActivity() {
                 if (checkPermission(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    f = 1
                     fusedLocationClient?.lastLocation?.addOnSuccessListener(this,{location : Location? ->
                         // Got last known location. In some rare
                         // situations this can be null.
@@ -130,6 +132,8 @@ class SplashActivity : AppCompatActivity() {
                             Log.e("LOG", location.toString())
                             lat = location.latitude
                             long = location.longitude
+                            f = 1;
+
 
                             //EsaitConstants.address = location.latitude.to
 
@@ -141,7 +145,7 @@ class SplashActivity : AppCompatActivity() {
                 else{
 
                 }
-            } while (location != null);
+            } while(f == 0);
 
 
             /***current location cheking    ******/
