@@ -132,12 +132,9 @@ class SplashActivity : AppCompatActivity() {
                             Log.e("LOG", location.toString())
                             lat = location.latitude
                             long = location.longitude
+                            placePickerCall(lat,long);
                             f = 1;
-
-
                             //EsaitConstants.address = location.latitude.to
-
-
                         }
 
                     })
@@ -146,15 +143,18 @@ class SplashActivity : AppCompatActivity() {
 
                 }
             } while(f == 0);
-
-
             /***current location cheking    ******/
-            if(list.get(0).get("availability").equals("1")) {
+            if(list.get(0).get("availability").equals("0")){
+                val intent = Intent(this, ShopClosedActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            /*if(list.get(0).get("availability").equals("1")) {
                 EsaitConstants.availabilityList = list;
                 if(emp.isNotEmpty()){
                     //lat = empArraylat[0].toDouble()
                     //long = empArraylong[0].toDouble()
-                    placePickerCall(lat,long);
+
                 }
                 else{
                     //lat = 12.9231058
@@ -180,7 +180,7 @@ class SplashActivity : AppCompatActivity() {
                 val intent = Intent(this, ShopClosedActivity::class.java)
                 startActivity(intent)
                 finish()
-            }
+            }*/
         } catch (e: JSONException) {
             e.printStackTrace()
         }
