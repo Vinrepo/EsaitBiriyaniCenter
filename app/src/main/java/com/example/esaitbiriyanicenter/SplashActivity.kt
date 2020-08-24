@@ -60,6 +60,8 @@ class SplashActivity : AppCompatActivity() {
     lateinit var textView: TextView
     private lateinit var locationManager: LocationManager
     var gpsStatus = true
+    var lat = 0.0
+    var long = 0.0
 
 
 
@@ -98,9 +100,10 @@ class SplashActivity : AppCompatActivity() {
             val emp: List<LatlongClass> = databaseHandler.viewLatlong()
             val empArraylat = Array<String>(emp.size){"null"}
             val empArraylong = Array<String>(emp.size){"null"}
+
+
             var index = 0
-            var lat = 0.0
-            var long = 0.0
+
             for(e in emp){
                 empArraylat[index] = e.userlat
                 empArraylong[index] = e.userlong
@@ -127,11 +130,16 @@ class SplashActivity : AppCompatActivity() {
                             Log.e("LOG", location.toString())
                             lat = location.latitude
                             long = location.longitude
+
                             //EsaitConstants.address = location.latitude.to
 
 
                         }
+
                     })
+                }
+                else{
+
                 }
             } while (location != null);
 
