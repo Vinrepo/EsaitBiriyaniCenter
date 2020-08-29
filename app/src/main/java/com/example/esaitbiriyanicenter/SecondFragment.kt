@@ -67,13 +67,13 @@ class SecondFragment : Fragment() {
             empArraylong[index] = e.userlong
         }
         //}
-        EsaitConstants.address.toString().length
+
         editTextAddress.setText(EsaitConstants.address)
         if(emp.isNotEmpty()){
             if(empArrayId[0] == "100") {
                 editTextPhone.setText(empArrayphone[0]);
                 //editTextAddress.setText(empArrayName[0]);
-                //editTextTextEmailName.setText(empArrayEmail[0]);
+                editTextTextEmailName.setText(empArrayEmail[0]);
                 c = 1
             }
 

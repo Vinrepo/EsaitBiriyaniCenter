@@ -5,11 +5,13 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
@@ -26,8 +28,6 @@ import com.example.esaitbiriyanicenter.DatabaseHandler
 import com.example.esaitbiriyanicenter.EmpModelClass
 import com.example.esaitbiriyanicenter.LatlongClass
 import com.example.esaitbiriyanicenter.ShopClosedActivity
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.restaurant.esaitbiriyanicenter.constants.EsaitConstants
 import com.sucho.placepicker.*
 import com.sucho.placepicker.Constants.GOOGLE_API_KEY
@@ -36,6 +36,9 @@ import org.json.JSONException
 import org.json.JSONObject
 import android.provider.Settings;
 import android.view.View
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import kotlinx.android.synthetic.main.splash_screen.*
 import kotlinx.coroutines.delay
 import java.lang.Exception
 import kotlinx.coroutines.*
@@ -45,12 +48,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
-        if (!checkGPSEnabled()) {
-            return
-        }
-
+        createLocationRequest();
         getItems();
-
     }
     var fusedLocationClient: FusedLocationProviderClient? = null
     val PERMISSION_ID = 42
@@ -64,6 +63,19 @@ class SplashActivity : AppCompatActivity() {
     var long = 0.0
     var f = 0
 
+    private lateinit var locationRequest: LocationRequest
+    private var locationUpdateState = false
+    var l = false
+
+    companion object {
+        private const val MY_LOCATION_REQUEST_CODE = 329
+        private const val NEW_REMINDER_REQUEST_CODE = 330
+        private const val EXTRA_LAT_LNG = "EXTRA_LAT_LNG"
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        private const val REQUEST_CHECK_SETTINGS = 2
+        private const val PLACE_PICKER_REQUEST = 3
+
+    }
 
 
     private fun getItems() {
@@ -110,81 +122,80 @@ class SplashActivity : AppCompatActivity() {
                 empArraylong[index] = e.userlong
             }
             /***current location cheking    ******/
-            var location = null
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            do {
-
-
+            if(emp!=null){
+                placePickerCall(empArraylat[0].toDouble(),empArraylong[0].toDouble());
+            } else {
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
                 if (checkPermission(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    f = 1
-                    fusedLocationClient?.lastLocation?.addOnSuccessListener(this,{location : Location? ->
-                        // Got last known location. In some rare
-                        // situations this can be null.
-                        if(location == null) {
-                            Toast.makeText(this,"please turn on loaction",Toast.LENGTH_SHORT).show()
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                ) {
 
-
-                            // TODO, handle it
+                    fusedLocationClient?.lastLocation?.addOnCompleteListener({ task ->
+                        var location: Location? = task.result
+                        if (location == null) {
+                            NewLocationData();
                         } else location.apply {
                             // Handle location object
                             Log.e("LOG", location.toString())
                             lat = location.latitude
                             long = location.longitude
-                            placePickerCall(lat,long);
-                            f = 1;
-                            //EsaitConstants.address = location.latitude.to
+                            placePickerCall(lat, long);
+                            //EsaitConstants.address = location.latitude.toString();
                         }
-
                     })
                 }
-                else{
-
-                }
-            } while(f == 0);
+            }
             /***current location cheking    ******/
             if(list.get(0).get("availability").equals("0")){
                 val intent = Intent(this, ShopClosedActivity::class.java)
                 startActivity(intent)
                 finish()
             }
-            /*if(list.get(0).get("availability").equals("1")) {
-                EsaitConstants.availabilityList = list;
-                if(emp.isNotEmpty()){
-                    //lat = empArraylat[0].toDouble()
-                    //long = empArraylong[0].toDouble()
 
-                }
-                else{
-                    //lat = 12.9231058
-                    //long = 80.1266854
-                    //lat = location.lat
-                    //long = 80.1266854
-                    val builder = AlertDialog.Builder(this);
-                    builder.setMessage("We would like to know your location to serve you better, please select your location from the Map.");
-                    //performing positive action
-                    builder.setPositiveButton("Proceed"){dialogInterface, which ->
-                        placePickerCall(lat,long);
-                    }
-                    // Create the AlertDialog
-                    val alertDialog: AlertDialog = builder.create()
-                    // Set other dialog properties
-                    alertDialog.setCancelable(false)
-                    alertDialog.show()
-                }
-
-
-
-            } else if(list.get(0).get("availability").equals("0")){
-                val intent = Intent(this, ShopClosedActivity::class.java)
-                startActivity(intent)
-                finish()
-            }*/
         } catch (e: JSONException) {
             e.printStackTrace()
         }
 
+    }
+
+
+    fun NewLocationData(){
+        var locationRequest =  LocationRequest()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 0
+        locationRequest.fastestInterval = 0
+        locationRequest.numUpdates = 1
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient!!.requestLocationUpdates(
+            locationRequest,locationCallback, Looper.myLooper()
+        )
+    }
+
+    private val locationCallback = object : LocationCallback(){
+        override fun onLocationResult(locationResult: LocationResult) {
+            var lastLocation: Location = locationResult.lastLocation
+            placePickerCall(lastLocation.latitude ,lastLocation.longitude);
+            //textView.text = "You Last Location is : Long: "+ lastLocation.longitude + " , Lat: " + lastLocation.latitude + "\n";
+        }
     }
 
 
@@ -197,11 +208,10 @@ class SplashActivity : AppCompatActivity() {
                 if (addressData != null) {
                     /*****latitude and longitude database handler*****/
                     val databaseHandler: DatabaseHandler= DatabaseHandler(this)
-
                     //calling the viewEmployee method of DatabaseHandler class to read the records
                     EsaitConstants.latitude = addressData.latitude
                     EsaitConstants.longitude = addressData.longitude
-                    //EsaitConstants.address = addressData?.addressList?.get(0)?.getAddressLine(0).toString()
+                    EsaitConstants.address = addressData?.addressList?.get(0)?.getAddressLine(0).toString()
                     val emp: List<LatlongClass> = databaseHandler.viewLatlong()
                     val empArraylat = Array<String>(emp.size){"null"}
                     val empArraylong = Array<String>(emp.size){"null"}
@@ -213,10 +223,8 @@ class SplashActivity : AppCompatActivity() {
                     }
                     if (emp.isNotEmpty()){
                         updateRecord(this)
-
                     }
                     else{
-
                         saveRecord(this)
                     }
                     /*****latitude and longitude database handler*****/
@@ -254,10 +262,11 @@ class SplashActivity : AppCompatActivity() {
     }
 
     fun placePickerCall(lat : Double, long : Double) {
+        progressBar.visibility = View.INVISIBLE
         val intent = PlacePicker.IntentBuilder()
             .setLatLong(lat, long)  // Initial Latitude and Longitude the Map will load into
             .showLatLong(false)  // Show Coordinates in the Activity
-            .setMapZoom(20.0f)  // Map Zoom Level. Default: 14.0
+            .setMapZoom(15.0f)  // Map Zoom Level. Default: 14.0
             .setAddressRequired(true) // Set If return only Coordinates if cannot fetch Address for the coordinates. Default: True
             .hideMarkerShadow(true) // Hides the shadow under the map marker. Default: False
             .setMarkerDrawable(R.drawable.map) // Change the default Marker Image
@@ -275,6 +284,7 @@ class SplashActivity : AppCompatActivity() {
             .build(this)
         startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST)
     }
+
     private fun checkPermission(vararg perm:String) : Boolean {
         val havePermissions = perm.toList().all {
             ContextCompat.checkSelfPermission(this,it) ==
@@ -305,31 +315,24 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            PERMISSION_ID -> {
+        if(requestCode == PERMISSION_ID){
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                progressBar.visibility = View.VISIBLE
+                NewLocationData();
+            }
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED){
+                val dialog = AlertDialog.Builder(this)
+                dialog.setTitle("Location permission")
+                    .setMessage("Witout location permission we will not be able to serve you better!")
+                    .setPositiveButton("OK") { paramDialogInterface, paramInt ->
+                        finish();
+                    }
 
-                //Handle some logic here
+                dialog.show()
             }
         }
     }
-    private fun checkGpsStatus() {
-        locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        Toast.makeText(this,"please turn on loaction",Toast.LENGTH_SHORT).show()
-        if (gpsStatus) {
 
-
-        } else {
-
-            intent1 = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent1);
-
-        }
-    }
-    fun gpsStatus(view: View) {
-        intent1 = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivity(intent1);
-    }
     private fun checkGPSEnabled(): Boolean {
         if (!isLocationEnabled())
             showAlert()
@@ -347,9 +350,40 @@ class SplashActivity : AppCompatActivity() {
             .setPositiveButton("Location Settings") { paramDialogInterface, paramInt ->
                 val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(myIntent)
+                finish()
             }
             .setNegativeButton("Cancel") { paramDialogInterface, paramInt -> }
         dialog.show()
+    }
+
+    fun createLocationRequest() {
+        locationRequest = LocationRequest()
+        locationRequest.interval = 1000
+        //locationRequest.fastestInterval = 1000
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+        val client = LocationServices.getSettingsClient(this)
+        val task = client.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            locationUpdateState = true
+        }
+        task.addOnFailureListener { e ->
+            if (e is ResolvableApiException) {
+                // Location settings are not satisfied, but this can be fixed
+                // by showing the user a dialog.
+                try {
+                    // Show the dialog by calling startResolutionForResult(),
+                    // and check the result in onActivityResult().
+                    e.startResolutionForResult(this,
+                        REQUEST_CHECK_SETTINGS)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    // Ignore the error.
+                }
+            }
+        }
     }
 
 }
