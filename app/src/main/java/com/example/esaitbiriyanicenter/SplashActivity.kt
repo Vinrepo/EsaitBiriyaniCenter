@@ -122,9 +122,10 @@ class SplashActivity : AppCompatActivity() {
                 empArraylong[index] = e.userlong
             }
             /***current location cheking    ******/
-            if(emp!=null){
-                placePickerCall(empArraylat[0].toDouble(),empArraylong[0].toDouble());
-            } else {
+            if(empArraylat.size>0 && empArraylong.size >0) {
+                placePickerCall(empArraylat[0].toDouble(), empArraylong[0].toDouble());
+            }
+             else {
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
                 if (checkPermission(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
