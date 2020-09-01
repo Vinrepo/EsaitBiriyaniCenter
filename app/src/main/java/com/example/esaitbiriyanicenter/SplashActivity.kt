@@ -53,33 +53,15 @@ class SplashActivity : AppCompatActivity() {
     }
     var fusedLocationClient: FusedLocationProviderClient? = null
     val PERMISSION_ID = 42
-    var deliveryCharges = 0;
-    private lateinit var context: Context
-    var intent1: Intent? = null
-    lateinit var textView: TextView
-    private lateinit var locationManager: LocationManager
-    var gpsStatus = true
     var lat = 0.0
     var long = 0.0
-    var f = 0
-
     private lateinit var locationRequest: LocationRequest
     private var locationUpdateState = false
-    var l = false
-
     companion object {
-        private const val MY_LOCATION_REQUEST_CODE = 329
-        private const val NEW_REMINDER_REQUEST_CODE = 330
-        private const val EXTRA_LAT_LNG = "EXTRA_LAT_LNG"
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val REQUEST_CHECK_SETTINGS = 2
-        private const val PLACE_PICKER_REQUEST = 3
-
     }
-
-
     private fun getItems() {
-        //loading = ProgressDialog.show(this, "Loading", "please wait", false, true)
+        progressBar.visibility = View.VISIBLE;
         val stringRequest = StringRequest(
             Request.Method.GET,
             "https://script.google.com/macros/s/AKfycbwbdLqmiFybgjp58eyPwRYrdP8Fkatr5f8rynjVFeZi1HiblLUS/exec?action=getItems",
@@ -123,6 +105,7 @@ class SplashActivity : AppCompatActivity() {
             }
             /***current location cheking    ******/
             if(empArraylat.size>0 && empArraylong.size >0) {
+                progressBar.visibility = View.INVISIBLE;
                 placePickerCall(empArraylat[0].toDouble(), empArraylong[0].toDouble());
             }
              else {
@@ -132,16 +115,16 @@ class SplashActivity : AppCompatActivity() {
                         Manifest.permission.ACCESS_FINE_LOCATION
                     )
                 ) {
-
                     fusedLocationClient?.lastLocation?.addOnCompleteListener({ task ->
                         var location: Location? = task.result
                         if (location == null) {
-                            NewLocationData();
+                            newLocationData();
                         } else location.apply {
                             // Handle location object
                             Log.e("LOG", location.toString())
                             lat = location.latitude
                             long = location.longitude
+                            progressBar.visibility = View.INVISIBLE;
                             placePickerCall(lat, long);
                             //EsaitConstants.address = location.latitude.toString();
                         }
@@ -162,7 +145,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
 
-    fun NewLocationData(){
+    fun newLocationData(){
         var locationRequest =  LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 0
@@ -195,11 +178,8 @@ class SplashActivity : AppCompatActivity() {
         override fun onLocationResult(locationResult: LocationResult) {
             var lastLocation: Location = locationResult.lastLocation
             placePickerCall(lastLocation.latitude ,lastLocation.longitude);
-            //textView.text = "You Last Location is : Long: "+ lastLocation.longitude + " , Lat: " + lastLocation.latitude + "\n";
         }
     }
-
-
 
     override fun onActivityResult(requestCode: Int,resultCode: Int,data: Intent?) {
 
@@ -216,7 +196,6 @@ class SplashActivity : AppCompatActivity() {
                     val emp: List<LatlongClass> = databaseHandler.viewLatlong()
                     val empArraylat = Array<String>(emp.size){"null"}
                     val empArraylong = Array<String>(emp.size){"null"}
-
                     var index = 0
                     for(e in emp){
                         empArraylat[index] = e.userlat
@@ -319,7 +298,7 @@ class SplashActivity : AppCompatActivity() {
         if(requestCode == PERMISSION_ID){
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 progressBar.visibility = View.VISIBLE
-                NewLocationData();
+                newLocationData();
             }
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED){
                 val dialog = AlertDialog.Builder(this)
