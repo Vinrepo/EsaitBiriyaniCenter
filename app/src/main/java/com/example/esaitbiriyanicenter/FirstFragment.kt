@@ -254,7 +254,7 @@ class FirstFragment : Fragment() {
             }
 
             if (grandTotal > 0) {
-                if((grandTotal > 500) && distance <10){
+                if((grandTotal > 500) && distance <=10){
                     deliveryCharges = 0;
                 }
                 if (specialPackingCharges > 0) {
@@ -263,7 +263,7 @@ class FirstFragment : Fragment() {
                 }
                 grandTotal = grandTotal + deliveryCharges;
                 var discountedPrice = 0;
-                if(grandTotal>1000) {
+                if(grandTotal>1000 && distance <=10) {
                     discountedPrice = grandTotal/10;
                     grandTotal = grandTotal - grandTotal/10;
                 }
